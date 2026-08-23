@@ -39,6 +39,7 @@ export type Education = {
   institution: string;
   location: string;
   period: string;
+  startDate?: string;
   description: string;
 };
 
@@ -56,9 +57,12 @@ export type Certification = {
 
 export type ResearchItem = {
   title: string;
+  authors: string;
   status: string;
   venue: string;
+  doi: string;
   url: string;
+  year: number | "";
   description: string;
 };
 
@@ -125,6 +129,7 @@ export type Subscriber = {
   token: string;
   createdAt: string;
   confirmedAt: string;
+  expiresAt?: string;
 };
 
 export type AnalyticsEvent = {

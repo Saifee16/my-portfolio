@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getContent } from "@/lib/cms";
+import { MobileNav } from "@/components/mobile-nav";
 
 const nav = [
   ["Work", "#work"],
@@ -20,8 +21,9 @@ export async function Navbar() {
           {nav.map(([label, href]) => <Link key={href} href={`/${href}`} className="nav-link">{label}</Link>)}
         </nav>
         <div className="flex items-center gap-4">
-          {content.cv.activeFileUrl ? <a className="nav-link text-white" href={content.cv.activeFileUrl} download>Résumé ↓</a> : null}
-          <a className="nav-link text-white" href={content.profile.github} target="_blank" rel="noreferrer">GitHub ↗</a>
+          {content.cv.activeFileUrl ? <a className="nav-link text-white" href="/resume" download>Résumé ↓</a> : null}
+          <a className="nav-link text-white" href={content.profile.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          <MobileNav />
         </div>
       </div>
     </header>

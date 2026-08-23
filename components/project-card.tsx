@@ -1,6 +1,9 @@
 import type { Project } from "@/lib/types";
+import { isSafeExternalUrl } from "@/lib/content-utils";
 
 export function ProjectCard({ project, featured = false }: { project: Project; featured?: boolean }) {
+  const repositoryIsPublic = Boolean(project.repoUrl && !/private/i.test(project.repoVisibility) && isSafeExternalUrl(project.repoUrl));
+  const liveUrlIsSafe = Boolean(project.liveUrl && isSafeExternalUrl(project.liveUrl));
   return (
     <article className={`project-card ${featured ? "featured" : ""}`}>
       <div className="flex items-start justify-between gap-4 mono text-[10px] uppercase tracking-[.15em] text-[var(--muted)]">
@@ -14,8 +17,8 @@ export function ProjectCard({ project, featured = false }: { project: Project; f
       <div className="mt-8 flex flex-wrap gap-2">{project.stack.slice(0, featured ? 8 : 5).map(item => <span className="chip" key={item}>{item}</span>)}</div>
       <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-white/10 pt-5">
         <a href={`/projects/${project.slug}`} className="text-link">Case study →</a>
-        {project.repoUrl ? <a href={project.repoUrl} target="_blank" rel="noreferrer" className="text-link">Repository ↗</a> : <span className="mono text-[10px] uppercase tracking-[.1em] text-[var(--muted)]">{project.repoVisibility}</span>}
-        {project.liveUrl ? <a href={project.liveUrl} target="_blank" rel="noreferrer" className="text-link">Live ↗</a> : null}
+        {repositoryIsPublic ? <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="text-link">Repository ↗</a> : <span className="mono text-[10px] uppercase tracking-[.1em] text-[var(--muted)]">{project.repoVisibility}</span>}
+        {liveUrlIsSafe ? <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-link">Live ↗</a> : null}
       </div>
     </article>
   );

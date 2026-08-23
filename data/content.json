@@ -141,10 +141,10 @@
       "repoVisibility": "Private repository",
       "repoUrl": "",
       "liveUrl": "",
-      "stack": ["Python", "FastAPI", "PostgreSQL", "Docker", "DNS", "AdGuard Home", "Caddy", "MV3 Extension"],
+      "stack": ["Python", "FastAPI", "PostgreSQL", "Docker", "DNS", "Browser extension"],
       "highlights": [
         "Family DNS filtering with safe-search and restricted-mode enforcement plus custom rule management.",
-        "Self-hosted local administration, backup/reset workflows, system status, and browser-extension controls.",
+        "Self-hosted local administration, backup/reset workflows, system status, and browser-assisted controls.",
         "Security-focused validation including secret scanning, dependency/container checks, and device/network test planning.",
         "Architecture is public at a high level while source code and operational details remain private during alpha."
       ],
@@ -217,10 +217,11 @@
   "education": [
     {
       "degree": "M.S. Artificial Intelligence",
-      "institution": "National University of Sciences & Technology (NUST) — Pakistan Navy Engineering College",
+      "institution": "National University of Sciences & Technology (NUST)",
       "location": "Karachi, Pakistan",
-      "period": "Starting 7 September 2026",
-      "description": "Graduate study in Artificial Intelligence. Before the program begins, this portfolio intentionally labels the degree as upcoming rather than 'Present'."
+      "period": "Starting September 2026",
+      "startDate": "2026-09-07",
+      "description": "Graduate study in Artificial Intelligence at Pakistan Navy Engineering College (PNEC), Karachi. Before the program begins, this portfolio intentionally labels the degree as upcoming rather than 'Present'."
     },
     {
       "degree": "B.E. Telecommunication Engineering",
@@ -234,9 +235,12 @@
   "research": [
     {
       "title": "MS-ADA: AI-Powered Intelligent Traffic Surveillance for Real-Time Accident and Hit-and-Run Detection & Tracking",
+      "authors": "To be added after formal publication",
       "status": "Publication details pending",
       "venue": "To be added after formal publication",
+      "doi": "",
       "url": "",
+      "year": "",
       "description": "Research publication derived from the NED Final Year Project. The portfolio will not claim publication, acceptance, venue, DOI, or citation details until they are formally available."
     }
   ],

@@ -1,5 +1,7 @@
 import { getContent } from "@/lib/cms";
 import { SectionHeading } from "@/components/section-heading";
+import { formatEducationPeriod } from "@/lib/content-utils";
+import Link from "next/link";
 
 export async function EducationSection() {
   const { education, certifications, research } = await getContent();
@@ -10,7 +12,7 @@ export async function EducationSection() {
       <div className="mt-14 grid gap-5 lg:grid-cols-2">
         {education.map((item, idx) => (
           <article className="surface p-6 sm:p-8" key={`${item.degree}-${idx}`}>
-            <div className="mono text-[10px] uppercase tracking-[.15em] text-[var(--muted)]">{item.period}</div>
+            <div className="mono text-[10px] uppercase tracking-[.15em] text-[var(--muted)]">{formatEducationPeriod(item)}</div>
             <h3 className="mt-8 text-3xl font-medium tracking-[-.045em]">{item.degree}</h3>
             <p className="mt-2 text-sm leading-6 text-[var(--accent)]">{item.institution}</p>
             <p className="mt-1 text-xs text-[var(--muted)]">{item.location}</p>
@@ -21,11 +23,12 @@ export async function EducationSection() {
       <div className="mt-5 grid gap-5 lg:grid-cols-[1.2fr_.8fr]">
         <div className="surface p-6 sm:p-8">
           <div className="eyebrow">Research</div>
-          {research.map((item, idx) => <div className="mt-7" key={`${item.title}-${idx}`}><h3 className="text-xl font-medium leading-7">{item.title}</h3><p className="mt-2 mono text-[10px] uppercase tracking-[.12em] text-[var(--accent)]">{item.status}</p><p className="mt-4 leading-7 text-[var(--copy)]">{item.description}</p>{item.url ? <a className="text-link mt-5 inline-flex" href={item.url} target="_blank" rel="noreferrer">Publication ↗</a> : null}</div>)}
+          {research.map((item, idx) => <div className="mt-7" key={`${item.title}-${idx}`}><h3 className="text-xl font-medium leading-7">{item.title}</h3><p className="mt-2 mono text-[10px] uppercase tracking-[.12em] text-[var(--accent)]">{item.status}</p><p className="mt-2 text-sm text-[var(--muted)]">{item.authors}{item.venue ? ` · ${item.venue}` : ""}{item.year ? ` · ${item.year}` : ""}</p><p className="mt-4 leading-7 text-[var(--copy)]">{item.description}</p><div className="mt-5 flex flex-wrap gap-5">{item.url ? <a className="text-link" href={item.url} target="_blank" rel="noopener noreferrer">Publication ↗</a> : null}{item.doi ? <a className="text-link" href={`https://doi.org/${encodeURIComponent(item.doi)}`} target="_blank" rel="noopener noreferrer">DOI ↗</a> : null}</div></div>)}
         </div>
         <div className="surface p-6 sm:p-8">
           <div className="eyebrow">Featured certifications</div>
           {featured.length ? <div className="mt-6 space-y-4">{featured.map(cert => <div key={cert.id} className="border-t border-white/10 pt-4"><p className="font-medium">{cert.name}</p><p className="mt-1 text-sm text-[var(--muted)]">{cert.issuer} · {cert.issueDate}</p></div>)}</div> : <p className="mt-6 leading-7 text-[var(--copy)]">Certifications are managed from the private CMS and will appear here once selected as featured.</p>}
+          <Link className="text-link mt-7 inline-flex" href="/certifications">View all certifications →</Link>
         </div>
       </div>
     </section>

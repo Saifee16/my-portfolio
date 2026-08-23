@@ -7,33 +7,79 @@ function escapeHtml(input: string) {
     .replaceAll("'", "&#039;");
 }
 
+function headingId(input: string) {
+  return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "section";
+}
+
 function inline(input: string) {
-  return escapeHtml(input)
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
+  const codeTokens: string[] = [];
+  const linkTokens: string[] = [];
+  const escaped = escapeHtml(input)
+    .replace(/`([^`]+)`/g, (_, code: string) => {
+      const token = `@@CODE${codeTokens.length}@@`;
+      codeTokens.push(`<code>${code}</code>`);
+      return token;
+    })
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, label: string, url: string) => {
+      const token = `@@LINK${linkTokens.length}@@`;
+      linkTokens.push(`<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);
+      return token;
+    })
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*([^*]+)\*/g, "<em>$1</em>")
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
+    .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  return linkTokens.reduce((result, value, index) => result.replace(`@@LINK${index}@@`, value), codeTokens.reduce((result, value, index) => result.replace(`@@CODE${index}@@`, value), escaped));
 }
 
 export function renderMarkdown(markdown: string) {
   const lines = markdown.replace(/\r/g, "").split("\n");
   const html: string[] = [];
+  const headingCounts = new Map<string, number>();
   let inList = false;
+  let inCode = false;
+  let codeLanguage = "";
+  let codeLines: string[] = [];
+
+  function closeList() {
+    if (inList) { html.push("</ul>"); inList = false; }
+  }
+
+  function closeCode() {
+    if (!inCode) return;
+    html.push(`<pre><code${codeLanguage ? ` class="language-${escapeHtml(codeLanguage)}"` : ""}>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+    inCode = false;
+    codeLanguage = "";
+    codeLines = [];
+  }
+
   for (const raw of lines) {
     const line = raw.trimEnd();
+    if (line.startsWith("```")) {
+      closeList();
+      if (inCode) closeCode();
+      else { inCode = true; codeLanguage = line.slice(3).trim().replace(/[^a-z0-9_-]/gi, ""); }
+      continue;
+    }
+    if (inCode) { codeLines.push(raw); continue; }
     if (line.startsWith("- ")) {
       if (!inList) { html.push("<ul>"); inList = true; }
       html.push(`<li>${inline(line.slice(2))}</li>`);
       continue;
     }
-    if (inList) { html.push("</ul>"); inList = false; }
+    closeList();
     if (!line.trim()) continue;
-    if (line.startsWith("### ")) html.push(`<h3>${inline(line.slice(4))}</h3>`);
-    else if (line.startsWith("## ")) html.push(`<h2>${inline(line.slice(3))}</h2>`);
-    else if (line.startsWith("# ")) html.push(`<h1>${inline(line.slice(2))}</h1>`);
-    else if (line.startsWith("> ")) html.push(`<blockquote>${inline(line.slice(2))}</blockquote>`);
+    const heading = line.match(/^(#{1,3})\s+(.+)$/);
+    if (heading) {
+      const level = heading[1].length;
+      const text = heading[2];
+      const baseId = headingId(text);
+      const count = headingCounts.get(baseId) ?? 0;
+      headingCounts.set(baseId, count + 1);
+      const id = count ? `${baseId}-${count + 1}` : baseId;
+      html.push(`<h${level} id="${id}">${inline(text)}</h${level}>`);
+    } else if (line.startsWith("> ")) html.push(`<blockquote>${inline(line.slice(2))}</blockquote>`);
     else html.push(`<p>${inline(line)}</p>`);
   }
-  if (inList) html.push("</ul>");
+  closeList();
+  closeCode();
   return html.join("\n");
 }
