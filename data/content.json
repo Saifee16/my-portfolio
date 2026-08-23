@@ -1,0 +1,292 @@
+{
+  "profile": {
+    "name": "Saifullah Suleman",
+    "shortName": "Saifullah",
+    "title": "Applied AI & Full-Stack Engineer — Backend Focus",
+    "eyebrow": "APPLIED AI / BACKEND SYSTEMS / FULL-STACK ENGINEERING",
+    "hero": "I build reliable AI systems and the software infrastructure around them.",
+    "summary": "Applied AI engineer and full-stack developer with a backend focus, building production-minded systems across RAG, LLM infrastructure, ML APIs, computer vision, and commerce software.",
+    "about": "I work where applied AI meets dependable software engineering: typed APIs, evaluation, retrieval, data systems, testing, security, deployment, and product workflows. My goal is to build systems that are technically credible, useful to real users, and explicit about their limitations.",
+    "availability": "Open to Applied AI, Backend, and Full-Stack engineering opportunities.",
+    "email": "imsaifq1@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/saifullah-suleman/",
+    "github": "https://github.com/Saifee16",
+    "whatsapp": "https://wa.me/923483034922",
+    "photoUrl": ""
+  },
+  "projects": [
+    {
+      "slug": "pdf-rag-chatbot",
+      "rank": 1,
+      "title": "PDF RAG Chatbot",
+      "subtitle": "Secure async document intelligence with hybrid retrieval, OCR, abstention, and grounded citations.",
+      "category": "Flagship Engineering",
+      "status": "Shipped",
+      "visibility": "Public",
+      "repoVisibility": "Public repository",
+      "repoUrl": "https://github.com/Saifee16/pdf-rag-chatbot",
+      "liveUrl": "",
+      "stack": ["FastAPI", "Celery", "Redis", "Qdrant", "PostgreSQL", "PyMuPDF", "Tesseract OCR", "Docker"],
+      "highlights": [
+        "Asynchronous PDF ingestion with worker-based processing and persistent metadata.",
+        "Dense, hybrid, and hybrid-rerank retrieval with evidence-based confidence gating and abstention.",
+        "Native, scanned, and mixed PDF handling with local OCR plus layout/table-aware extraction.",
+        "Validated page citations, retrieval traces, reindex fingerprints, regression evaluation, and security hardening."
+      ],
+      "architecture": "PDF validation → async queue → extraction/OCR → structure-aware chunks → embeddings → Qdrant + lexical retrieval → fusion/reranking → confidence gate → grounded generation → validated citations",
+      "caseStudy": "Built as an infrastructure-complete RAG backend rather than a chat demo. The system treats ingestion, retrieval quality, confidence calibration, document security, citation validity, and regression testing as first-class engineering problems.",
+      "limitations": "Evaluation is repository-defined and domain-dependent; OCR and layout heuristics are bounded by configured limits and do not imply universal document understanding.",
+      "featured": true
+    },
+    {
+      "slug": "llm-api-gateway",
+      "rank": 2,
+      "title": "LLM API Gateway",
+      "subtitle": "Provider-neutral LLM infrastructure with stable aliases, retries, fallback chains, usage accounting, and analytics.",
+      "category": "Flagship Engineering",
+      "status": "Shipped",
+      "visibility": "Public",
+      "repoVisibility": "Public repository",
+      "repoUrl": "https://github.com/Saifee16/llm-api-gateway",
+      "liveUrl": "",
+      "stack": ["FastAPI", "Python", "OpenAI", "Gemini", "SQLite", "Docker", "Pytest"],
+      "highlights": [
+        "Stable model aliases decouple application code from provider-specific model names.",
+        "Ordered fallback chains, retry/backoff with jitter, gateway timeouts, and normalized errors.",
+        "Structured JSON output, embeddings, normalized token usage, cached-token accounting, and cost estimates.",
+        "Persistent usage analytics with async tests, routing/fallback coverage, CI, CodeQL, and Dependabot."
+      ],
+      "architecture": "Client → stable alias/router → provider adapter → retry/timeout policy → fallback provider → normalized response + usage ledger",
+      "caseStudy": "Designed to make provider switching and failure recovery an infrastructure concern instead of leaking vendor-specific behavior into every application.",
+      "limitations": "Provider behavior and pricing still change externally; the gateway normalizes interfaces but cannot eliminate upstream availability or model-quality differences.",
+      "featured": true
+    },
+    {
+      "slug": "lead-scoring-ml-api",
+      "rank": 3,
+      "title": "Lead Scoring ML API",
+      "subtitle": "An evaluated supervised-ML inference service with calibration, threshold policy, model integrity checks, and reproducible synthetic benchmarks.",
+      "category": "Flagship Engineering",
+      "status": "Shipped",
+      "visibility": "Public",
+      "repoVisibility": "Public repository",
+      "repoUrl": "https://github.com/Saifee16/lead-scoring-ml-api",
+      "liveUrl": "",
+      "stack": ["FastAPI", "scikit-learn", "Pandas", "PostgreSQL", "Docker", "Pytest"],
+      "highlights": [
+        "Deterministic 5,000-row synthetic B2B dataset with explicit non-production benchmark labeling.",
+        "Train/validation/test separation, calibration analysis, Brier/log-loss evaluation, and business-cost threshold policy.",
+        "Single, batch, and CSV scoring with typed feature contracts and local logistic contribution explanations.",
+        "Model manifest and SHA-256 verification before deserialization, CI coverage, CodeQL, and release/container workflows."
+      ],
+      "architecture": "Synthetic dataset → feature pipeline → model selection → calibration + threshold policy → signed artifact manifest → FastAPI inference",
+      "caseStudy": "The project focuses on the engineering around an ML model: data contracts, probability calibration, decision thresholds, artifact integrity, reproducibility, and honest evaluation boundaries.",
+      "limitations": "All benchmark metrics are synthetic and must not be interpreted as real CRM performance or causal business impact.",
+      "featured": true
+    },
+    {
+      "slug": "ai-engineering-starter-kit",
+      "rank": 4,
+      "title": "AI Engineering Starter Kit",
+      "subtitle": "A reusable FastAPI foundation for production-minded AI services with typed configuration, persistence, testing, security guardrails, and CI.",
+      "category": "Flagship Engineering",
+      "status": "Shipped",
+      "visibility": "Public",
+      "repoVisibility": "Public repository",
+      "repoUrl": "https://github.com/Saifee16/ai-engineering-starter-kit",
+      "liveUrl": "",
+      "stack": ["FastAPI", "Python", "Gemini", "SQLAlchemy", "Alembic", "PostgreSQL", "Docker", "GitHub Actions"],
+      "highlights": [
+        "Typed configuration, Gemini integration, structured output, logging, exception handling, and health endpoints.",
+        "SQLite/PostgreSQL-ready persistence with SQLAlchemy and Alembic migrations.",
+        "Optional API-key authentication plus production guardrails for debug mode, credentials, CORS, and weak keys.",
+        "Async tests, mocked provider calls, Ruff, Docker/Compose, CI, Bandit, pip-audit, and migration smoke tests."
+      ],
+      "architecture": "Client → FastAPI routes → service/provider layer → typed schemas → persistence/migrations → observability + tests + CI",
+      "caseStudy": "A foundation project built to eliminate repeated setup work while keeping production constraints visible from day one.",
+      "limitations": "It is a starter architecture, not a substitute for application-specific threat modeling, scaling, observability, or domain logic.",
+      "featured": true
+    },
+    {
+      "slug": "wahab-mobiles",
+      "rank": 5,
+      "title": "Wahab Mobiles",
+      "subtitle": "A production e-commerce platform for a family retail business, spanning storefront, authentication, checkout, administration, and deployment hardening.",
+      "category": "Production & Product Engineering",
+      "status": "Production",
+      "visibility": "Public",
+      "repoVisibility": "Public repository",
+      "repoUrl": "https://github.com/Saifee16/e-com-WM",
+      "liveUrl": "https://wahabmobiles.com",
+      "stack": ["React", "TypeScript", "Fastify", "Prisma", "PostgreSQL", "Redis", "Docker", "Nginx"],
+      "highlights": [
+        "Production-oriented commerce flows for a real family business rather than a portfolio-only demo.",
+        "Cookie-based JWT authentication with refresh rotation, role-based administration, and OAuth support.",
+        "Server-side checkout recalculation, locking/idempotency, signed guest cart handling, CSRF defenses, rate limits, and security headers.",
+        "Containerized deployment topology with API, PostgreSQL, Redis, migrations, and reverse proxy infrastructure."
+      ],
+      "architecture": "React storefront → Fastify API → auth/commerce services → Prisma/PostgreSQL + Redis → containerized reverse-proxy deployment",
+      "caseStudy": "This project demonstrates full-stack product engineering attached to an operating retail business: customer flows, administrative workflows, data integrity, security controls, and deployment concerns have to work together.",
+      "limitations": "Commercial details, credentials, operational data, and private business information are intentionally excluded from the public case study.",
+      "featured": false
+    },
+    {
+      "slug": "lucidfence",
+      "rank": 6,
+      "title": "LucidFence",
+      "subtitle": "A private, self-hosted household network-protection system for DNS filtering, safe-search enforcement, policy controls, and browser-assisted protection.",
+      "category": "Production & Product Engineering",
+      "status": "Private Alpha · Coming Soon",
+      "visibility": "Public",
+      "repoVisibility": "Private repository",
+      "repoUrl": "",
+      "liveUrl": "",
+      "stack": ["Python", "FastAPI", "PostgreSQL", "Docker", "DNS", "AdGuard Home", "Caddy", "MV3 Extension"],
+      "highlights": [
+        "Family DNS filtering with safe-search and restricted-mode enforcement plus custom rule management.",
+        "Self-hosted local administration, backup/reset workflows, system status, and browser-extension controls.",
+        "Security-focused validation including secret scanning, dependency/container checks, and device/network test planning.",
+        "Architecture is public at a high level while source code and operational details remain private during alpha."
+      ],
+      "architecture": "Household devices → DNS/policy layer → filtering + search/video enforcement → local control plane → browser extension + admin workflows",
+      "caseStudy": "LucidFence explores privacy-preserving family protection as a local systems problem across networking, policy enforcement, web controls, operations, and security—not just as a browser blocklist.",
+      "limitations": "Private alpha. Physical-device and bypass-resistance testing remains part of the validation process; no production-grade effectiveness claim is made yet.",
+      "featured": false
+    },
+    {
+      "slug": "atlas",
+      "rank": 7,
+      "title": "Atlas",
+      "subtitle": "Procurement intelligence for mapping merchant SKUs to credible upstream sourcing alternatives and comparing evidence-backed acquisition scenarios.",
+      "category": "Production & Product Engineering",
+      "status": "Private Development · Coming Soon",
+      "visibility": "Public",
+      "repoVisibility": "Private repository · open-source planned",
+      "repoUrl": "",
+      "liveUrl": "",
+      "stack": ["Applied AI", "Procurement Intelligence", "Product Matching", "Evidence Workflows", "Full-Stack"],
+      "highlights": [
+        "Maps merchant SKUs to candidate upstream sourcing alternatives using product identity and provenance signals.",
+        "Compares acquisition scenarios using landed cost, supplier evidence, and traceable sourcing context.",
+        "Designed as a usable product rather than a research-only matching experiment.",
+        "Source code is private during development, with open-source release planned after completion."
+      ],
+      "architecture": "Merchant SKU → identity normalization → candidate sourcing discovery → evidence/provenance layer → landed-cost comparison → ranked acquisition scenarios",
+      "caseStudy": "Atlas is being built around the hard part of procurement intelligence: not merely finding a similar listing, but establishing enough identity, provenance, cost, and supplier evidence to compare sourcing decisions credibly.",
+      "limitations": "Still under private development. Public usage, benchmark claims, and source release will be added only after validation and launch.",
+      "featured": false
+    },
+    {
+      "slug": "ms-ada",
+      "rank": 8,
+      "title": "MS-ADA Intelligent Traffic Surveillance",
+      "subtitle": "A CPU-first academic computer-vision prototype for vehicle tracking, ALPR, accident reasoning, hit-and-run monitoring, and evidence capture.",
+      "category": "Research",
+      "status": "Research Prototype",
+      "visibility": "Public",
+      "repoVisibility": "Public repository",
+      "repoUrl": "https://github.com/Saifee16/ms-ada-traffic-accident-detection",
+      "liveUrl": "",
+      "stack": ["Python", "YOLO11", "OpenCV", "Tracking", "ALPR", "Optical Flow", "Docker"],
+      "highlights": [
+        "Real-time vehicle detection and tracking with Pakistani plate recognition and evidence outputs.",
+        "Deterministic multi-signal accident reasoning using contact/proximity, relative motion, deceleration, optical flow, and trajectory convergence.",
+        "Hit-and-run monitoring, event CSVs, processed video, snapshots/clips, and alert workflows.",
+        "Final Year Project at NED University; publication details will be added once the research paper is formally published."
+      ],
+      "architecture": "Video → YOLO detection → persistent tracking → motion/ALPR signals → temporal collision reasoning → evidence capture + alerts",
+      "caseStudy": "MS-ADA is an academic research prototype that combines computer vision components into an interpretable temporal event pipeline. It is intentionally presented as research rather than as deployment-grade traffic safety infrastructure.",
+      "limitations": "Academic prototype; no claim of production readiness or universal accident-detection accuracy. Research-paper citation will be added after formal publication.",
+      "featured": false
+    }
+  ],
+  "experience": [
+    {
+      "title": "Freelance Developer & Data Analyst",
+      "organization": "Independent",
+      "period": "Project-based",
+      "description": "Delivered freelance work across data analysis and web development, translating client requirements into practical analyses, reports, and software deliverables. Specific client names and commercially sensitive details remain private unless explicitly approved for publication."
+    },
+    {
+      "title": "President",
+      "organization": "TE Links — NED University",
+      "period": "2025–2026",
+      "description": "Led the departmental student body through a year spanning 10+ events, 6 technical sessions, 10+ partnerships, and 3 community initiatives across technical learning, professional development, student community, and university programming."
+    }
+  ],
+  "education": [
+    {
+      "degree": "M.S. Artificial Intelligence",
+      "institution": "National University of Sciences & Technology (NUST) — Pakistan Navy Engineering College",
+      "location": "Karachi, Pakistan",
+      "period": "Starting 7 September 2026",
+      "description": "Graduate study in Artificial Intelligence. Before the program begins, this portfolio intentionally labels the degree as upcoming rather than 'Present'."
+    },
+    {
+      "degree": "B.E. Telecommunication Engineering",
+      "institution": "NED University of Engineering & Technology",
+      "location": "Karachi, Pakistan",
+      "period": "2022–2026",
+      "description": "Engineering foundation spanning telecommunications and computing, culminating in the MS-ADA computer-vision Final Year Project."
+    }
+  ],
+  "certifications": [],
+  "research": [
+    {
+      "title": "MS-ADA: AI-Powered Intelligent Traffic Surveillance for Real-Time Accident and Hit-and-Run Detection & Tracking",
+      "status": "Publication details pending",
+      "venue": "To be added after formal publication",
+      "url": "",
+      "description": "Research publication derived from the NED Final Year Project. The portfolio will not claim publication, acceptance, venue, DOI, or citation details until they are formally available."
+    }
+  ],
+  "blog": [
+    {
+      "id": "draft-rag-abstention",
+      "slug": "why-my-rag-system-learned-to-say-i-dont-know",
+      "title": "Why My RAG System Learned to Say ‘I Don’t Know’",
+      "excerpt": "Engineering confidence gates and abstention into retrieval-augmented generation instead of forcing an answer from weak evidence.",
+      "content": "# Why my RAG system learned to say ‘I don’t know’\n\nThis draft will become an engineering note about retrieval confidence, evidence sufficiency, regression evaluation, and why abstention is a product feature rather than a failure.\n\n## What changed\n\nThe system moved from always generating an answer toward explicitly testing whether retrieved evidence was strong enough to justify generation.\n\n## What I would measure\n\n- Retrieval quality\n- Answer support\n- Citation validity\n- False-confidence rate\n\nThis post is intentionally kept as a draft until the final case-study evidence and examples are ready.",
+      "category": "Applied AI",
+      "tags": ["RAG", "Retrieval", "Evaluation"],
+      "status": "Draft",
+      "publishedAt": "",
+      "seoTitle": "",
+      "seoDescription": "",
+      "coverImage": "",
+      "featured": true
+    },
+    {
+      "id": "draft-llm-gateway",
+      "slug": "an-llm-gateway-is-more-than-an-api-proxy",
+      "title": "An LLM Gateway Is More Than an API Proxy",
+      "excerpt": "Retries, fallbacks, stable aliases, normalized usage, and cost accounting turn provider calls into infrastructure.",
+      "content": "# An LLM gateway is more than an API proxy\n\nDraft engineering note covering stable aliases, provider adapters, retry policy, fallbacks, normalized errors, and usage accounting.",
+      "category": "Backend Systems",
+      "tags": ["LLM", "FastAPI", "Infrastructure"],
+      "status": "Draft",
+      "publishedAt": "",
+      "seoTitle": "",
+      "seoDescription": "",
+      "coverImage": "",
+      "featured": false
+    }
+  ],
+  "cv": {
+    "label": "Résumé",
+    "activeFileUrl": "",
+    "version": "",
+    "updatedAt": ""
+  },
+  "newsletter": {
+    "enabled": true,
+    "heading": "Engineering notes, occasionally.",
+    "description": "Applied AI, backend systems, and lessons from building real software."
+  },
+  "settings": {
+    "siteUrl": "http://localhost:3000",
+    "analyticsEnabled": true,
+    "phoneVisible": false,
+    "projectOrderMode": "rank"
+  }
+}

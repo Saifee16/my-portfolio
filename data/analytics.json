@@ -1,0 +1,29 @@
+{
+  "events": [
+    {
+      "path": "/",
+      "event": "page_view",
+      "at": "2026-08-23T15:26:23.594Z"
+    },
+    {
+      "path": "/projects/pdf-rag-chatbot",
+      "event": "page_view",
+      "at": "2026-08-23T15:27:31.883Z"
+    },
+    {
+      "path": "/",
+      "event": "page_view",
+      "at": "2026-08-23T15:27:40.506Z"
+    },
+    {
+      "path": "/projects/ms-ada",
+      "event": "page_view",
+      "at": "2026-08-23T15:28:45.677Z"
+    },
+    {
+      "path": "/",
+      "event": "page_view",
+      "at": "2026-08-23T15:28:50.585Z"
+    }
+  ]
+}
