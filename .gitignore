@@ -7,3 +7,5 @@ out
 .DS_Store
 public/uploads/*
 !public/uploads/.gitkeep
+data/admin-sessions.json
+*.tsbuildinfo
