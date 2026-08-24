@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import crypto from "node:crypto";
 import { isSameOriginRequest } from "@/lib/request";
+import { getStorage } from "@/lib/storage";
 import { hasValidFileSignature, uploadRules, type UploadKind } from "@/lib/uploads";
 
 export async function POST(request: Request) {
@@ -24,8 +23,6 @@ export async function POST(request: Request) {
   if (!hasValidFileSignature(file.type, bytes)) return NextResponse.json({ error: "File signature does not match its declared type" }, { status: 415 });
   const extMap: Record<string,string> = { "application/pdf":"pdf", "image/jpeg":"jpg", "image/png":"png", "image/webp":"webp" };
   const filename = `${kind}-${Date.now()}-${crypto.randomBytes(5).toString("hex")}.${extMap[file.type]}`;
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  await fs.mkdir(uploadDir, { recursive: true });
-  await fs.writeFile(path.join(uploadDir, filename), bytes);
-  return NextResponse.json({ url: `/uploads/${filename}` });
+  const stored = await getStorage().uploadAsset(filename, bytes, file.type);
+  return NextResponse.json({ url: stored.url });
 }

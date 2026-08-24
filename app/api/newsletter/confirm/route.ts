@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSubscribers, saveSubscribers } from "@/lib/cms";
+import { getSubscribersSnapshot, saveSubscribers } from "@/lib/cms";
 import { isConfirmationTokenActive } from "@/lib/newsletter";
 import { isSameOriginRequest } from "@/lib/request";
 
@@ -14,13 +14,14 @@ export async function POST(request: Request) {
   const form = await request.formData().catch(() => null);
   const token = form?.get("token");
   if (typeof token !== "string" || token.length > 200) return redirect(request, "invalid");
-  const subscribers = await getSubscribers();
+  const snapshot = await getSubscribersSnapshot();
+  const subscribers = snapshot.value;
   const index = subscribers.findIndex(subscriber => subscriber.token === token);
   const candidate = index >= 0 ? subscribers[index] : undefined;
   if (!candidate || !isConfirmationTokenActive(candidate)) return redirect(request, "invalid");
   if (candidate.status !== "active") {
     subscribers[index] = { ...candidate, status: "active", confirmedAt: new Date().toISOString() };
-    await saveSubscribers(subscribers);
+    await saveSubscribers(subscribers, snapshot.etag);
   }
   return redirect(request, "confirmed");
 }
