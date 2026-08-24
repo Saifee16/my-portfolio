@@ -1,5 +1,6 @@
 import "server-only";
 import { promises as fs } from "node:fs";
+import crypto from "node:crypto";
 import path from "node:path";
 import type { AnalyticsEvent, PortfolioContent, Subscriber } from "@/lib/types";
 
@@ -18,7 +19,7 @@ async function readJson<T>(file: string, fallback: T): Promise<T> {
 
 async function atomicWrite(file: string, data: unknown) {
   await fs.mkdir(path.dirname(file), { recursive: true });
-  const temp = `${file}.${process.pid}.tmp`;
+  const temp = `${file}.${process.pid}.${crypto.randomBytes(8).toString("hex")}.tmp`;
   await fs.writeFile(temp, JSON.stringify(data, null, 2), "utf8");
   await fs.rename(temp, file);
 }

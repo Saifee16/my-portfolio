@@ -74,6 +74,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .prose p, .prose li { color:var(--copy); line-height:1.85; font-size:1.02rem; }
 .prose ul { padding-left:1.2rem; list-style:disc; }
 .prose code { border:1px solid var(--border); background:var(--surface-2); padding:.12rem .35rem; color:#dfffb2; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.88em; }
+.prose pre { overflow-x:auto; margin:2rem 0; border:1px solid var(--border); background:#050507; padding:1.1rem 1.2rem; }
+.prose pre code { display:block; overflow-x:auto; border:0; background:transparent; padding:0; color:#dfffb2; line-height:1.75; white-space:pre; }
 .prose a { color:var(--accent); text-decoration:underline; text-underline-offset:3px; }
 .prose blockquote { border-left:2px solid var(--accent); margin:2rem 0; padding:1rem 1.25rem; color:#e6e6ea; background:rgba(183,255,60,.035); }
 

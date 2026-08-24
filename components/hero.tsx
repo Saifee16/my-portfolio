@@ -13,7 +13,7 @@ export async function Hero() {
             <p className="max-w-2xl text-pretty text-lg leading-8 text-[var(--copy)] sm:text-xl">{profile.summary}</p>
             <div className="flex flex-wrap gap-3 lg:justify-end">
               <a href="#work" className="button button-primary">View engineering work ↓</a>
-              {cv.activeFileUrl ? <a href={cv.activeFileUrl} download className="button button-secondary">Download résumé ↓</a> : <a href={profile.github} target="_blank" rel="noreferrer" className="button button-secondary">GitHub ↗</a>}
+              {cv.activeFileUrl ? <a href="/resume" download className="button button-secondary">Download résumé ↓</a> : <a href={profile.github} target="_blank" rel="noopener noreferrer" className="button button-secondary">GitHub ↗</a>}
             </div>
           </div>
         </div>
