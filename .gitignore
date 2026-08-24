@@ -8,4 +8,5 @@ out
 public/uploads/*
 !public/uploads/.gitkeep
 data/admin-sessions.json
+backups/
 *.tsbuildinfo
