@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSubscribers, saveSubscribers } from "@/lib/cms";
+import { getSubscribersSnapshot, saveSubscribers } from "@/lib/cms";
 import { isSameOriginRequest } from "@/lib/request";
 
 function redirect(request: Request, result: "success" | "invalid") {
@@ -13,10 +13,11 @@ export async function POST(request: Request) {
   const form = await request.formData().catch(() => null);
   const token = form?.get("token");
   if (typeof token !== "string" || token.length > 200) return redirect(request, "invalid");
-  const subscribers = await getSubscribers();
+  const snapshot = await getSubscribersSnapshot();
+  const subscribers = snapshot.value;
   const index = subscribers.findIndex(subscriber => subscriber.token === token && subscriber.status !== "unsubscribed");
   if (index < 0) return redirect(request, "invalid");
   subscribers[index] = { ...subscribers[index], status: "unsubscribed" };
-  await saveSubscribers(subscribers);
+  await saveSubscribers(subscribers, snapshot.etag);
   return redirect(request, "success");
 }

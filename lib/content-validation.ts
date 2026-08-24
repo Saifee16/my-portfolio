@@ -1,4 +1,5 @@
-import type { BlogPost, Certification, Education, Experience, PortfolioContent, Project, ResearchItem } from "@/lib/types";
+import type { BlogPost, Certification, Education, Experience, PortfolioContent, Project, ResearchItem } from "./types.ts";
+import { isAssetUrl } from "./asset-url.ts";
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,12 +25,6 @@ function isHttpUrl(value: unknown, allowEmpty = true) {
   } catch {
     return false;
   }
-}
-
-function isAssetUrl(value: unknown, allowEmpty = true) {
-  if (value === "" && allowEmpty) return true;
-  if (!isString(value, 500)) return false;
-  return /^\/uploads\/[a-z0-9][a-z0-9._-]*\.(?:pdf|jpg|jpeg|png|webp)$/i.test(value);
 }
 
 function isSlug(value: unknown) {

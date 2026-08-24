@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
-import { getContent, getSubscribers, saveSubscribers } from "@/lib/cms";
+import { getContent, getSubscribersSnapshot, saveSubscribers } from "@/lib/cms";
 import { sendConfirmation } from "@/lib/mailer";
 import { siteDefaults } from "@/lib/site";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -17,13 +17,14 @@ export async function POST(request: Request) {
   if (typeof website === "string" && website.trim()) return NextResponse.json({ message: genericMessage });
   const normalized = String(email ?? "").trim().toLowerCase();
   if (!emailPattern.test(normalized) || normalized.length > 254) return NextResponse.json({ message: "Enter a valid email address." }, { status: 400 });
-  const subscribers = await getSubscribers();
+  const snapshot = await getSubscribersSnapshot();
+  const subscribers = snapshot.value;
   const existing = subscribers.find(s=>s.email===normalized);
   if (existing?.status === "active") return NextResponse.json({ message: genericMessage });
   const token = crypto.randomBytes(24).toString("hex");
   const item = { email: normalized, status: "pending" as const, token, createdAt: new Date().toISOString(), confirmedAt: "", expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString() };
   if (existing) Object.assign(existing, item); else subscribers.push(item);
-  await saveSubscribers(subscribers);
+  await saveSubscribers(subscribers, snapshot.etag);
   const content = await getContent();
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? content.settings.siteUrl ?? siteDefaults.url;
   await sendConfirmation(normalized, token, baseUrl);

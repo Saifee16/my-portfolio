@@ -8,13 +8,17 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/content-security.test.ts",
-    "hash-admin-password": "node --experimental-strip-types scripts/hash-admin-password.mjs"
+    "test": "node --experimental-strip-types --test tests/content-security.test.ts tests/storage.test.ts",
+    "hash-admin-password": "node --experimental-strip-types scripts/hash-admin-password.mjs",
+    "export-blob": "node scripts/export-blob.mjs",
+    "restore-blob": "node scripts/restore-blob.mjs"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.0",
     "next": "16.3.2",
     "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react-dom": "19.2.7",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.4",
