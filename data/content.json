@@ -36,7 +36,8 @@
       "architecture": "PDF validation → async queue → extraction/OCR → structure-aware chunks → embeddings → Qdrant + lexical retrieval → fusion/reranking → confidence gate → grounded generation → validated citations",
       "caseStudy": "Built as an infrastructure-complete RAG backend rather than a chat demo. The system treats ingestion, retrieval quality, confidence calibration, document security, citation validity, and regression testing as first-class engineering problems.",
       "limitations": "Evaluation is repository-defined and domain-dependent; OCR and layout heuristics are bounded by configured limits and do not imply universal document understanding.",
-      "featured": true
+      "featured": true,
+      "documents": []
     },
     {
       "slug": "llm-api-gateway",
@@ -59,7 +60,8 @@
       "architecture": "Client → stable alias/router → provider adapter → retry/timeout policy → fallback provider → normalized response + usage ledger",
       "caseStudy": "Designed to make provider switching and failure recovery an infrastructure concern instead of leaking vendor-specific behavior into every application.",
       "limitations": "Provider behavior and pricing still change externally; the gateway normalizes interfaces but cannot eliminate upstream availability or model-quality differences.",
-      "featured": true
+      "featured": true,
+      "documents": []
     },
     {
       "slug": "lead-scoring-ml-api",
@@ -82,7 +84,8 @@
       "architecture": "Synthetic dataset → feature pipeline → model selection → calibration + threshold policy → signed artifact manifest → FastAPI inference",
       "caseStudy": "The project focuses on the engineering around an ML model: data contracts, probability calibration, decision thresholds, artifact integrity, reproducibility, and honest evaluation boundaries.",
       "limitations": "All benchmark metrics are synthetic and must not be interpreted as real CRM performance or causal business impact.",
-      "featured": true
+      "featured": true,
+      "documents": []
     },
     {
       "slug": "ai-engineering-starter-kit",
@@ -105,7 +108,8 @@
       "architecture": "Client → FastAPI routes → service/provider layer → typed schemas → persistence/migrations → observability + tests + CI",
       "caseStudy": "A foundation project built to eliminate repeated setup work while keeping production constraints visible from day one.",
       "limitations": "It is a starter architecture, not a substitute for application-specific threat modeling, scaling, observability, or domain logic.",
-      "featured": true
+      "featured": true,
+      "documents": []
     },
     {
       "slug": "wahab-mobiles",
@@ -128,7 +132,8 @@
       "architecture": "React storefront → Fastify API → auth/commerce services → Prisma/PostgreSQL + Redis → containerized reverse-proxy deployment",
       "caseStudy": "This project demonstrates full-stack product engineering attached to an operating retail business: customer flows, administrative workflows, data integrity, security controls, and deployment concerns have to work together.",
       "limitations": "Commercial details, credentials, operational data, and private business information are intentionally excluded from the public case study.",
-      "featured": false
+      "featured": false,
+      "documents": []
     },
     {
       "slug": "lucidfence",
@@ -151,7 +156,8 @@
       "architecture": "Household devices → DNS/policy layer → filtering + search/video enforcement → local control plane → browser extension + admin workflows",
       "caseStudy": "LucidFence explores privacy-preserving family protection as a local systems problem across networking, policy enforcement, web controls, operations, and security—not just as a browser blocklist.",
       "limitations": "Private alpha. Physical-device and bypass-resistance testing remains part of the validation process; no production-grade effectiveness claim is made yet.",
-      "featured": false
+      "featured": false,
+      "documents": []
     },
     {
       "slug": "atlas",
@@ -174,7 +180,8 @@
       "architecture": "Merchant SKU → identity normalization → candidate sourcing discovery → evidence/provenance layer → landed-cost comparison → ranked acquisition scenarios",
       "caseStudy": "Atlas is being built around the hard part of procurement intelligence: not merely finding a similar listing, but establishing enough identity, provenance, cost, and supplier evidence to compare sourcing decisions credibly.",
       "limitations": "Still under private development. Public usage, benchmark claims, and source release will be added only after validation and launch.",
-      "featured": false
+      "featured": false,
+      "documents": []
     },
     {
       "slug": "ms-ada",
@@ -197,7 +204,8 @@
       "architecture": "Video → YOLO detection → persistent tracking → motion/ALPR signals → temporal collision reasoning → evidence capture + alerts",
       "caseStudy": "MS-ADA is an academic research prototype that combines computer vision components into an interpretable temporal event pipeline. It is intentionally presented as research rather than as deployment-grade traffic safety infrastructure.",
       "limitations": "Academic prototype; no claim of production readiness or universal accident-detection accuracy. Research-paper citation will be added after formal publication.",
-      "featured": false
+      "featured": false,
+      "documents": []
     }
   ],
   "experience": [

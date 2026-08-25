@@ -8,6 +8,13 @@ export type ProjectStatus =
   | "Coming Soon"
   | "Archived";
 
+export type ProjectDocument = {
+  id: string;
+  title: string;
+  description: string;
+  assetUrl: string;
+};
+
 export type Project = {
   slug: string;
   rank: number;
@@ -25,6 +32,7 @@ export type Project = {
   caseStudy: string;
   limitations: string;
   featured: boolean;
+  documents: ProjectDocument[];
 };
 
 export type Experience = {

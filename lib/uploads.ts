@@ -1,9 +1,10 @@
-export type UploadKind = "cv" | "image" | "certificate";
+export type UploadKind = "cv" | "image" | "certificate" | "project-document";
 
 export const uploadRules: Record<UploadKind, { mimeTypes: string[]; maxBytes: number }> = {
   cv: { mimeTypes: ["application/pdf"], maxBytes: 10 * 1024 * 1024 },
   image: { mimeTypes: ["image/jpeg", "image/png", "image/webp"], maxBytes: 5 * 1024 * 1024 },
   certificate: { mimeTypes: ["application/pdf", "image/jpeg", "image/png", "image/webp"], maxBytes: 10 * 1024 * 1024 },
+  "project-document": { mimeTypes: ["application/pdf"], maxBytes: 10 * 1024 * 1024 },
 };
 
 export function hasValidFileSignature(mimeType: string, bytes: Uint8Array) {
