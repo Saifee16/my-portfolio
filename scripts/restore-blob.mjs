@@ -27,7 +27,7 @@ for (const item of manifest) {
   if (!source.startsWith(`${sourceDirectory}${path.sep}`)) throw new Error("Unsafe restore pathname");
   const bytes = await readFile(source);
   await put(pathname, bytes, {
-    access: pathname.startsWith("cms/") ? "private" : "public",
+    access: "private",
     addRandomSuffix: false,
     allowOverwrite,
     contentType: contentType(pathname),

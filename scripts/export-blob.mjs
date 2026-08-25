@@ -27,7 +27,7 @@ function safeOutput(pathname) {
 const blobs = await listAll();
 const manifest = [];
 for (const blob of blobs) {
-  const access = blob.pathname.startsWith("cms/") ? "private" : "public";
+  const access = "private";
   const result = await get(blob.url, { access, useCache: false });
   if (!result || result.statusCode === 304) throw new Error(`Could not read ${blob.pathname}`);
   const target = safeOutput(blob.pathname);
