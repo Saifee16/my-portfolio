@@ -1,6 +1,7 @@
 import path from "node:path";
 import { isAssetUrl } from "./asset-url.ts";
 import { getStorage, parseStoredJson, type StorageAdapter } from "./storage.ts";
+import { normalizePortfolioContent } from "./content-validation.ts";
 import type { AnalyticsEvent, PortfolioContent, Subscriber } from "./types.ts";
 
 type JsonSnapshot<T> = { value: T; etag: string };
@@ -34,11 +35,20 @@ function contentAssets(value: unknown, assets = new Set<string>()) {
 async function deleteRemovedAssets(previous: PortfolioContent, next: PortfolioContent, storage: StorageAdapter) {
   const current = contentAssets(previous);
   const retained = contentAssets(next);
-  await Promise.all([...current].filter(asset => !retained.has(asset)).map(asset => storage.deleteAsset(asset).catch(() => undefined)));
+  const results = await Promise.all([...current].filter(asset => !retained.has(asset)).map(async asset => {
+    try {
+      await storage.deleteAsset(asset);
+      return null;
+    } catch {
+      return asset;
+    }
+  }));
+  return results.filter((asset): asset is string => Boolean(asset));
 }
 
 export async function getContentSnapshot(storage = getStorage()) {
-  return readJson<PortfolioContent>(storage, contentKey, {} as PortfolioContent);
+  const snapshot = await readJson<PortfolioContent>(storage, contentKey, {} as PortfolioContent);
+  return { ...snapshot, value: normalizePortfolioContent(snapshot.value) };
 }
 
 export async function getContent(storage = getStorage()): Promise<PortfolioContent> {
@@ -49,8 +59,8 @@ export async function saveContent(content: PortfolioContent, expectedEtag?: stri
   const previous = await getContentSnapshot(storage);
   const ifMatch = expectedEtag ?? previous.etag;
   const stored = await storage.writePrivateText(contentKey, JSON.stringify(content, null, 2), ifMatch ? { ifMatch } : undefined);
-  await deleteRemovedAssets(previous.value, content, storage);
-  return stored;
+  const cleanupFailures = await deleteRemovedAssets(previous.value, content, storage);
+  return { ...stored, cleanupFailures };
 }
 
 export async function getSubscribersSnapshot(storage = getStorage()) {

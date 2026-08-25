@@ -3,9 +3,9 @@ import { unlink } from "node:fs/promises";
 import { readFileSync as readTextFile } from "node:fs";
 import test from "node:test";
 import { formatEducationPeriod } from "../lib/content-utils.ts";
-import { isPortfolioContent } from "../lib/content-validation.ts";
+import { isPortfolioContent, normalizePortfolioContent } from "../lib/content-validation.ts";
 import { renderMarkdown } from "../lib/markdown.ts";
-import { hasValidFileSignature } from "../lib/uploads.ts";
+import { hasValidFileSignature, uploadRules } from "../lib/uploads.ts";
 import { hashAdminPassword, isAdminPasswordHash, verifyAdminPasswordHash } from "../lib/security.ts";
 import { issueAdminSession, revokeAdminSession, verifySessionToken } from "../lib/session.ts";
 
@@ -21,6 +21,22 @@ test("seeded portfolio content preserves the required project hierarchy", () => 
   assert.equal(content.projects.find(project => project.slug === "lucidfence")?.repoUrl, "");
   assert.equal(content.projects.find(project => project.slug === "atlas")?.repoUrl, "");
   assert.equal(content.projects.find(project => project.slug === "ms-ada")?.status, "Research Prototype");
+});
+
+test("legacy projects without documents remain valid and normalize to an empty list", () => {
+  const legacy = structuredClone(content) as SeedContent;
+  delete (legacy.projects[0] as unknown as Record<string, unknown>).documents;
+  assert.equal(isPortfolioContent(legacy), true);
+  const normalized = normalizePortfolioContent(legacy);
+  assert.deepEqual(normalized.projects[0].documents, []);
+});
+
+test("project documents require controlled PDF assets", () => {
+  const valid = structuredClone(content) as SeedContent & { projects: Array<SeedProject & Record<string, unknown>> };
+  valid.projects[0].documents = [{ id: "doc-1", title: "Evaluation report", description: "Retrieval evaluation.", assetUrl: "/media/project-document-1.pdf" }];
+  assert.equal(isPortfolioContent(valid), true);
+  valid.projects[0].documents = [{ id: "doc-1", title: "Evaluation report", description: "Retrieval evaluation.", assetUrl: "/media/project-document-1.png" }];
+  assert.equal(isPortfolioContent(valid), false);
 });
 
 test("education period changes truthfully after the configured start date", () => {
@@ -73,4 +89,6 @@ test("upload validation checks file signatures instead of trusting MIME alone", 
   assert.equal(hasValidFileSignature("application/pdf", new TextEncoder().encode("not a pdf")), false);
   assert.equal(hasValidFileSignature("image/png", new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])), true);
   assert.equal(hasValidFileSignature("image/png", new Uint8Array([137, 80, 78])), false);
+  assert.deepEqual(uploadRules["project-document"], { mimeTypes: ["application/pdf"], maxBytes: 10 * 1024 * 1024 });
+  assert.equal(hasValidFileSignature("application/pdf", new TextEncoder().encode("not a pdf")), false);
 });

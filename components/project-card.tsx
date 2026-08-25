@@ -11,7 +11,7 @@ export function ProjectCard({ project, featured = false, paired = false }: { pro
         <span>{String(project.rank).padStart(2, "0")} / {project.category}</span>
         <span className={`status ${statusTone}`}>{project.status}</span>
       </div>
-      <div className={`project-card-body ${featured ? "mt-12 lg:mt-16" : "mt-10"}`}>
+      <div className={`project-card-body ${featured ? "mt-10 lg:mt-12" : "mt-8"}`}>
         <h3 className={featured ? "max-w-4xl text-4xl font-medium tracking-[-.05em] sm:text-6xl lg:text-7xl" : "text-3xl font-medium tracking-[-.045em] sm:text-4xl"}>{project.title}</h3>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--copy)]">{project.subtitle}</p>
       </div>

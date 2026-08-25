@@ -1,5 +1,5 @@
-import type { BlogPost, Certification, Education, Experience, PortfolioContent, Project, ResearchItem } from "./types.ts";
-import { isAssetUrl } from "./asset-url.ts";
+import type { BlogPost, Certification, Education, Experience, PortfolioContent, Project, ProjectDocument, ResearchItem } from "./types.ts";
+import { isAssetUrl, isPdfAssetUrl } from "./asset-url.ts";
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -52,8 +52,24 @@ function isProject(value: unknown): value is Project {
     isString(value.architecture, 5_000) &&
     isString(value.caseStudy, 20_000) &&
     isString(value.limitations, 5_000) &&
-    typeof value.featured === "boolean"
+     typeof value.featured === "boolean" &&
+     (value.documents === undefined || (Array.isArray(value.documents) && value.documents.length <= 20 && value.documents.every(isProjectDocument)))
   );
+}
+
+function isProjectDocument(value: unknown): value is ProjectDocument {
+  return isRecord(value) && isString(value.id, 120) && isString(value.title, 240) && isString(value.description, 2_000) && isPdfAssetUrl(value.assetUrl);
+}
+
+export function normalizePortfolioContent(input: unknown): PortfolioContent {
+  if (!isRecord(input) || !Array.isArray(input.projects)) return input as PortfolioContent;
+  return {
+    ...input,
+    projects: input.projects.map(project => {
+      if (!isRecord(project) || Object.prototype.hasOwnProperty.call(project, "documents")) return project;
+      return { ...project, documents: [] };
+    }),
+  } as PortfolioContent;
 }
 
 function isExperience(value: unknown): value is Experience {
