@@ -6,8 +6,10 @@ import {
   BlobPreconditionFailedError,
   del,
   get,
+  head,
   put,
   type GetBlobResult,
+  type HeadBlobResult,
   type PutBlobResult,
 } from "@vercel/blob";
 import { isBlobAssetUrl, isControlledAssetUrl, isLocalAssetUrl, isAssetFilename } from "./asset-url.ts";
@@ -37,6 +39,7 @@ export type PrivateWriteOptions = {
 export type BlobStorageApi = {
   put: (pathname: string, body: Parameters<typeof put>[1], options: Parameters<typeof put>[2]) => Promise<PutBlobResult>;
   get: (urlOrPathname: string, options: Parameters<typeof get>[1]) => Promise<GetBlobResult | null>;
+  head?: (urlOrPathname: string, options?: Parameters<typeof head>[1]) => Promise<HeadBlobResult>;
   del: typeof del;
 };
 
@@ -98,9 +101,20 @@ function isConflict(error: unknown) {
   return error instanceof BlobPreconditionFailedError || (error instanceof Error && /precondition|etag|if-match/i.test(error.message));
 }
 
-function alternateEtag(value: string) {
-  const trimmed = value.trim();
-  return trimmed.startsWith('"') && trimmed.endsWith('"') ? trimmed.slice(1, -1) : `"${trimmed}"`;
+function normalizeEtag(value: string) {
+  let normalized = value.trim();
+  if (normalized.toLowerCase().startsWith("w/")) normalized = normalized.slice(2).trim();
+  if (normalized.startsWith('"') && normalized.endsWith('"')) normalized = normalized.slice(1, -1);
+  return normalized;
+}
+
+function sameEtag(left: string, right: string) {
+  return normalizeEtag(left) === normalizeEtag(right);
+}
+
+function etagCandidates(value: string) {
+  const normalized = normalizeEtag(value);
+  return [...new Set([value.trim(), normalized, `"${normalized}"`, `W/"${normalized}"`, `W/${normalized}`])];
 }
 
 async function readFileIfPresent(file: string) {
@@ -186,7 +200,7 @@ function blobObject(result: PutBlobResult, pathname: string): StoredObject {
   return { pathname, url: result.url, etag: result.etag };
 }
 
-export function createBlobStorage(api: BlobStorageApi = { put, get, del }): StorageAdapter {
+export function createBlobStorage(api: BlobStorageApi = { put, get, head, del }): StorageAdapter {
   return {
     driver: "vercel-blob",
 
@@ -228,15 +242,39 @@ export function createBlobStorage(api: BlobStorageApi = { put, get, del }): Stor
         return blobObject(stored, pathname);
       } catch (error) {
         if (isConflict(error) && options?.ifMatch) {
+          if (api.head) {
+            const metadata = await api.head(pathname);
+            if (!sameEtag(metadata.etag, options.ifMatch)) throw new StorageConflictError();
+            try {
+              const stored = await api.put(pathname, text, {
+                access: "private",
+                addRandomSuffix: false,
+                allowOverwrite: true,
+                contentType: "application/json",
+                ifMatch: metadata.etag,
+              });
+              return blobObject(stored, pathname);
+            } catch (retryError) {
+              if (isConflict(retryError)) throw new StorageConflictError();
+              throw retryError;
+            }
+          }
           try {
-            const stored = await api.put(pathname, text, {
-              access: "private",
-              addRandomSuffix: false,
-              allowOverwrite: true,
-              contentType: "application/json",
-              ifMatch: alternateEtag(options.ifMatch),
-            });
-            return blobObject(stored, pathname);
+            for (const ifMatch of etagCandidates(options.ifMatch)) {
+              try {
+                const stored = await api.put(pathname, text, {
+                  access: "private",
+                  addRandomSuffix: false,
+                  allowOverwrite: true,
+                  contentType: "application/json",
+                  ifMatch,
+                });
+                return blobObject(stored, pathname);
+              } catch (retryError) {
+                if (!isConflict(retryError)) throw retryError;
+              }
+            }
+            throw new StorageConflictError();
           } catch (retryError) {
             if (isConflict(retryError)) throw new StorageConflictError();
             throw retryError;
