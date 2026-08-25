@@ -69,8 +69,12 @@ test("Blob storage bootstraps canonical content and rejects stale writes", async
     await assert.rejects(storage.writePrivateText("content.json", "{\"new\":true}", { ifMatch: "stale" }), StorageConflictError);
 
     const asset = await storage.uploadAsset("image-123-abc.png", new Uint8Array([137, 80, 78]), "image/png");
-    assert.equal(isBlobAssetUrl(asset.url), true);
+    assert.equal(asset.url, "/media/image-123-abc.png");
+    assert.equal(isAssetUrl(asset.url), true);
+    assert.equal(isBlobAssetUrl(asset.url), false);
+    assert.deepEqual([...((await storage.readAsset(asset.url))?.bytes ?? [])], [137, 80, 78]);
     await storage.deleteAsset(asset.url);
+    assert.equal(await storage.readAsset(asset.url), null);
     assert.equal((await storage.readPrivateText("content.json"))?.text, "{\"seed\":true}");
   } finally {
     await rm(root, { recursive: true, force: true });

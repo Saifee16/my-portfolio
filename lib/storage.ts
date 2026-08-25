@@ -10,7 +10,7 @@ import {
   type GetBlobResult,
   type PutBlobResult,
 } from "@vercel/blob";
-import { isBlobAssetUrl, isLocalAssetUrl, isAssetFilename } from "./asset-url.ts";
+import { isBlobAssetUrl, isControlledAssetUrl, isLocalAssetUrl, isAssetFilename } from "./asset-url.ts";
 
 export type StorageDriver = "filesystem" | "vercel-blob";
 
@@ -241,16 +241,22 @@ export function createBlobStorage(api: BlobStorageApi = { put, get, del }): Stor
       if (!isAssetFilename(filename)) throw new Error("Unsafe asset filename");
       const pathname = `uploads/${filename}`;
       const stored = await api.put(pathname, Buffer.from(bytes), {
-        access: "public",
+        access: "private",
         addRandomSuffix: false,
         allowOverwrite: false,
         contentType,
         cacheControlMaxAge: 31536000,
       });
-      return blobObject(stored, pathname);
+      return { pathname, url: `/media/${filename}`, etag: stored.etag };
     },
 
     async readAsset(url) {
+      if (isControlledAssetUrl(url)) {
+        const filename = url.slice("/media/".length);
+        const result = await api.get(`uploads/${filename}`, { access: "private", useCache: false });
+        if (!result || result.statusCode === 304) return null;
+        return { bytes: await streamBytes(result.stream), contentType: result.blob.contentType };
+      }
       if (!isBlobAssetUrl(url)) return null;
       const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) return null;
@@ -258,9 +264,10 @@ export function createBlobStorage(api: BlobStorageApi = { put, get, del }): Stor
     },
 
     async deleteAsset(url) {
-      if (!isBlobAssetUrl(url)) return;
+      const pathname = isControlledAssetUrl(url) ? `uploads/${url.slice("/media/".length)}` : isBlobAssetUrl(url) ? url : null;
+      if (!pathname) return;
       try {
-        await api.del(url);
+        await api.del(pathname);
       } catch (error) {
         if (!(error instanceof BlobNotFoundError)) throw error;
       }

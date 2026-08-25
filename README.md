@@ -53,7 +53,7 @@ NEWSLETTER_FROM="Saifullah Suleman <updates@your-domain.example>"
 
 ## Deployment and storage boundary
 
-The CMS keeps its existing filesystem mode for local development and persistent Node/VPS deployments. On Vercel, set `STORAGE_DRIVER=vercel-blob`; the same `lib/cms.ts` API then stores CMS JSON and owner/session state in private Vercel Blob objects, while validated CV, certificate, portrait, and blog media use public Blob objects. The Blob token is used only by server code and is never returned to the browser.
+The CMS keeps its existing filesystem mode for local development and persistent Node/VPS deployments. On Vercel, set `STORAGE_DRIVER=vercel-blob`; the same `lib/cms.ts` API then stores CMS JSON, owner/session state, and validated media in one private Vercel Blob store. Public media is delivered through the controlled same-origin `/media/<generated-filename>` route (and the résumé through `/resume`), so the Blob token is used only by server code and is never returned to the browser.
 
 Vercel Blob initialization is idempotent: the first read copies only the canonical repository seed JSON when the corresponding private object is missing. A later deployment never overwrites an initialized store. CMS saves use ETags and `If-Match`; stale admin screens receive a conflict instead of silently replacing newer content. Analytics writes are intentionally disabled in Blob mode to avoid a write per page view.
 
