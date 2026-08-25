@@ -98,6 +98,11 @@ function isConflict(error: unknown) {
   return error instanceof BlobPreconditionFailedError || (error instanceof Error && /precondition|etag|if-match/i.test(error.message));
 }
 
+function alternateEtag(value: string) {
+  const trimmed = value.trim();
+  return trimmed.startsWith('"') && trimmed.endsWith('"') ? trimmed.slice(1, -1) : `"${trimmed}"`;
+}
+
 async function readFileIfPresent(file: string) {
   try {
     return await fs.readFile(file);
@@ -222,6 +227,21 @@ export function createBlobStorage(api: BlobStorageApi = { put, get, del }): Stor
         });
         return blobObject(stored, pathname);
       } catch (error) {
+        if (isConflict(error) && options?.ifMatch) {
+          try {
+            const stored = await api.put(pathname, text, {
+              access: "private",
+              addRandomSuffix: false,
+              allowOverwrite: true,
+              contentType: "application/json",
+              ifMatch: alternateEtag(options.ifMatch),
+            });
+            return blobObject(stored, pathname);
+          } catch (retryError) {
+            if (isConflict(retryError)) throw new StorageConflictError();
+            throw retryError;
+          }
+        }
         if (isConflict(error)) throw new StorageConflictError();
         throw error;
       }
