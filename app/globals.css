@@ -26,7 +26,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .site-glow { position: fixed; width: 42rem; height: 42rem; right: -18rem; top: -10rem; z-index: -1; pointer-events: none; border-radius: 999px; background: color-mix(in srgb, var(--accent) 13%, transparent); filter: blur(120px); opacity: .5; }
 
 .shell { width: min(100%, 1480px); margin-inline: auto; padding-inline: 1.25rem; }
-.section { width: min(100%, 1480px); margin-inline: auto; padding: 4.5rem 1.25rem 0; }
+.section { width: min(100%, 1480px); margin-inline: auto; padding: 3.25rem 1.25rem 0; }
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
 .eyebrow { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .7rem; line-height: 1.2rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
 .muted { color: var(--muted); }
@@ -95,6 +95,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .admin-sidebar a { display:block; padding:.72rem .8rem; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:#9c9ca4; border-left:2px solid transparent; }
 .admin-sidebar a:hover { color:white; background:rgba(255,255,255,.025); border-left-color:var(--accent); }
 
-@media (min-width: 640px) { .shell { padding-inline:2rem; } .section { padding:5rem 2rem 0; } .project-card { padding:2rem; } }
-@media (min-width: 1024px) { .shell { padding-inline:3rem; } .section { padding:6.5rem 3rem 0; } .project-card { padding:2.5rem; } .project-card.paired { display:flex; flex-direction:column; } .project-card.paired .project-card-footer { margin-top:auto; padding-top:2rem; } .timeline-item { grid-template-columns:220px 1fr; gap:2rem; } }
+@media (min-width: 640px) { .shell { padding-inline:2rem; } .section { padding:3.75rem 2rem 0; } .project-card { padding:2rem; } }
+@media (min-width: 1024px) { .shell { padding-inline:3rem; } .section { padding:4rem 3rem 0; } .project-card { padding:2.5rem; } .project-card.paired { display:flex; flex-direction:column; } .project-card.paired .project-card-footer { margin-top:auto; padding-top:2rem; } .timeline-item { grid-template-columns:220px 1fr; gap:2rem; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; } }

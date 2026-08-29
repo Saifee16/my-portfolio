@@ -48,7 +48,107 @@ function EducationEditor({data,setData,upload}:{data:PortfolioContent;setData:(d
 
 function ResearchEditor({data,setData}:{data:PortfolioContent;setData:(d:PortfolioContent)=>void}) { const patch=(i:number,p:Partial<ResearchItem>)=>{const x=[...data.research];x[i]={...x[i],...p};setData({...data,research:x});}; return <Collection title="Research / publications" onAdd={()=>setData({...data,research:[...data.research,{title:"New publication",authors:"To be added",status:"Draft",venue:"",doi:"",url:"",year:"",description:""}]})}>{data.research.map((x,i)=><div className="admin-card grid gap-4 lg:grid-cols-2" key={i}>{(["title","authors","status","venue","doi","url"] as const).map(k=><label className="form-label" key={k}>{k}<input className="form-input" value={x[k]} onChange={e=>patch(i,{[k]:e.target.value})}/></label>)}<label className="form-label">Publication year<input className="form-input" type="number" value={x.year} onChange={e=>patch(i,{year:e.target.value ? Number(e.target.value) : ""})}/></label><label className="form-label lg:col-span-2">Description<textarea className="form-textarea" value={x.description} onChange={e=>patch(i,{description:e.target.value})}/></label></div>)}</Collection>; }
 
-function BlogEditor({data,setData,save,upload}:{data:PortfolioContent;setData:(d:PortfolioContent)=>void;save:(d?:PortfolioContent|null)=>Promise<void>;upload:(f:File,k:string)=>Promise<string>}) { const patch=(i:number,p:Partial<BlogPost>)=>{const x=[...data.blog];x[i]={...x[i],...p};setData({...data,blog:x});}; async function notify(id:string){await save();const res=await fetch("/api/admin/notify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({postId:id})});const x=await res.json() as {sent?:boolean;reason?:string};alert(x.sent?"Subscribers notified.":x.reason||"Notification skipped.");} return <Collection title="Blog posts" onAdd={()=>setData({...data,blog:[...data.blog,{id:crypto.randomUUID(),slug:"new-post",title:"New post",excerpt:"",content:"# New post\n\nStart writing here.",category:"Engineering Notes",tags:[],status:"Draft",publishedAt:"",seoTitle:"",seoDescription:"",coverImage:"",featured:false}]})}>{data.blog.map((x,i)=><details className="admin-card" key={x.id} open={i===0}><summary className="cursor-pointer list-none"><div className="flex justify-between gap-4"><h2 className="text-xl font-medium">{x.title}</h2><span className="status">{x.status}</span></div></summary><div className="mt-6 grid gap-4 lg:grid-cols-2"><label className="form-label">Title<input className="form-input" value={x.title} onChange={e=>patch(i,{title:e.target.value})}/></label><label className="form-label">Slug<input className="form-input" value={x.slug} onChange={e=>patch(i,{slug:e.target.value})}/></label><label className="form-label">Category<input className="form-input" value={x.category} onChange={e=>patch(i,{category:e.target.value})}/></label><label className="form-label">Tags (comma-separated)<input className="form-input" value={x.tags.join(", ")} onChange={e=>patch(i,{tags:splitComma(e.target.value)})}/></label><label className="form-label">Status<select className="form-select" value={x.status} onChange={e=>patch(i,{status:e.target.value as BlogPost["status"],publishedAt:e.target.value==="Published"?(x.publishedAt||new Date().toISOString().slice(0,10)):x.publishedAt})}><option>Draft</option><option>Published</option></select></label><label className="form-label">Published date<input className="form-input" type="date" value={x.publishedAt.slice(0,10)} onChange={e=>patch(i,{publishedAt:e.target.value})}/></label><label className="form-label lg:col-span-2">Excerpt<textarea className="form-textarea" value={x.excerpt} onChange={e=>patch(i,{excerpt:e.target.value})}/></label><label className="form-label">Cover image<input className="form-input" type="file" accept="image/jpeg,image/png,image/webp" onChange={async e=>{const f=e.target.files?.[0];if(f)patch(i,{coverImage:await upload(f,"image")});}} />{x.coverImage?<span className="text-xs text-[var(--muted)]">Current: {x.coverImage}</span>:null}</label><label className="form-label lg:col-span-2">Markdown content<textarea className="form-textarea min-h-[28rem] mono text-sm" value={x.content} onChange={e=>patch(i,{content:e.target.value})}/></label><label className="form-label">SEO title<input className="form-input" value={x.seoTitle} onChange={e=>patch(i,{seoTitle:e.target.value})}/></label><label className="form-label">SEO description<input className="form-textarea" value={x.seoDescription} onChange={e=>patch(i,{seoDescription:e.target.value})}/></label><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={x.featured} onChange={e=>patch(i,{featured:e.target.checked})}/> Featured</label><div className="flex flex-wrap justify-end gap-4">{x.status==="Published"?<button className="text-sm text-[var(--accent)]" onClick={()=>void notify(x.id)}>Save + notify subscribers</button>:null}<button className="text-sm text-red-300" onClick={()=>{if(window.confirm("Delete this blog post from the draft?"))setData({...data,blog:data.blog.filter((_,n)=>n!==i)})}}>Delete</button></div></div></details>)}</Collection>; }
+function BlogEditor({data,setData,save,upload}:{data:PortfolioContent;setData:(d:PortfolioContent)=>void;save:(d?:PortfolioContent|null)=>Promise<void>;upload:(f:File,k:string)=>Promise<string>}) {
+  const [composer, setComposer] = useState<BlogPost | null>(null);
+  const [composerError, setComposerError] = useState("");
+
+  const ordered = [...data.blog].sort((a,b) => Number(b.featured) - Number(a.featured) || (b.publishedAt || "").localeCompare(a.publishedAt || ""));
+  const patch = (i:number,p:Partial<BlogPost>) => {
+    const items = data.blog.map((post,index) => index === i ? {...post,...p} : p.featured ? {...post,featured:false} : post);
+    setData({...data,blog:items});
+  };
+  function newPost():BlogPost {
+    return {id:crypto.randomUUID(),slug:"new-post",title:"",excerpt:"",content:"# New post\n\nStart writing here.",category:"Engineering Notes",tags:[],status:"Draft",publishedAt:"",seoTitle:"",seoDescription:"",coverImage:"",featured:false};
+  }
+  function patchComposer(p:Partial<BlogPost>) {
+    setComposer(current => current ? {...current,...p} : current);
+    setComposerError("");
+  }
+  function normalize(post:BlogPost,status:BlogPost["status"]) {
+    const title = post.title.trim();
+    if (!title) {
+      setComposerError("Add a title before saving this post.");
+      return null;
+    }
+    const rawSlug = post.slug.trim() || title;
+    const baseSlug = rawSlug.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || `post-${Date.now()}`;
+    let slug = baseSlug;
+    let suffix = 2;
+    while (data.blog.some(item => item.slug === slug)) slug = `${baseSlug}-${suffix++}`;
+    return {...post,title,slug,status,publishedAt:status === "Published" ? (post.publishedAt || new Date().toISOString().slice(0,10)) : ""};
+  }
+  async function commit(status:BlogPost["status"]) {
+    if (!composer) return;
+    const post = normalize(composer,status);
+    if (!post) return;
+    const existing = post.featured ? data.blog.map(item => ({...item,featured:false})) : data.blog;
+    const next = {...data,blog:[post,...existing]};
+    setData(next);
+    await save(next);
+    setComposer(null);
+    setComposerError("");
+  }
+  async function publishExisting(id:string) {
+    const target = data.blog.find(item => item.id === id);
+    if (!target) return;
+    const published = {...target,status:"Published" as const,publishedAt:target.publishedAt || new Date().toISOString().slice(0,10)};
+    const items = data.blog.map(item => item.id === id ? published : published.featured ? {...item,featured:false} : item);
+    const next = {...data,blog:items};
+    setData(next);
+    await save(next);
+  }
+  async function notify(id:string) {
+    await save();
+    const res = await fetch("/api/admin/notify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({postId:id})});
+    const x = await res.json() as {sent?:boolean;reason?:string};
+    alert(x.sent ? "Subscribers notified." : x.reason || "Notification skipped.");
+  }
+  return <div className="space-y-4">
+    <div className="flex justify-end"><button className="button button-secondary" type="button" onClick={()=>{setComposer(newPost());setComposerError("");}}>+ Add blog post</button></div>
+    {ordered.map((x,displayIndex) => {
+      const i = data.blog.findIndex(item => item.id === x.id);
+      return <details className="admin-card" key={x.id} open={displayIndex === 0}>
+        <summary className="cursor-pointer list-none"><div className="flex justify-between gap-4"><div><h2 className="text-xl font-medium">{x.title || "Untitled post"}</h2>{x.featured ? <p className="mt-1 eyebrow">Featured first</p> : null}</div><span className="status">{x.status}</span></div></summary>
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <label className="form-label">Title<input className="form-input" value={x.title} onChange={e=>patch(i,{title:e.target.value})}/></label>
+          <label className="form-label">Slug<input className="form-input" value={x.slug} onChange={e=>patch(i,{slug:e.target.value})}/></label>
+          <label className="form-label">Category<input className="form-input" value={x.category} onChange={e=>patch(i,{category:e.target.value})}/></label>
+          <label className="form-label">Tags (comma-separated)<input className="form-input" value={x.tags.join(", ")} onChange={e=>patch(i,{tags:splitComma(e.target.value)})}/></label>
+          <label className="form-label">Status<select className="form-select" value={x.status} onChange={e=>patch(i,{status:e.target.value as BlogPost["status"],publishedAt:e.target.value==="Published"?(x.publishedAt||new Date().toISOString().slice(0,10)):x.publishedAt})}><option>Draft</option><option>Published</option></select></label>
+          <label className="form-label">Published date<input className="form-input" type="date" value={x.publishedAt.slice(0,10)} onChange={e=>patch(i,{publishedAt:e.target.value})}/></label>
+          <label className="form-label lg:col-span-2">Excerpt<textarea className="form-textarea" value={x.excerpt} onChange={e=>patch(i,{excerpt:e.target.value})}/></label>
+          <label className="form-label">Cover image<input className="form-input" type="file" accept="image/jpeg,image/png,image/webp" onChange={async e=>{const f=e.target.files?.[0];if(f)patch(i,{coverImage:await upload(f,"image")});}} />{x.coverImage?<span className="text-xs text-[var(--muted)]">Current: {x.coverImage}</span>:null}</label>
+          <label className="form-label lg:col-span-2">Markdown content<textarea className="form-textarea min-h-[28rem] mono text-sm" value={x.content} onChange={e=>patch(i,{content:e.target.value})}/></label>
+          <label className="form-label">SEO title<input className="form-input" value={x.seoTitle} onChange={e=>patch(i,{seoTitle:e.target.value})}/></label>
+          <label className="form-label">SEO description<textarea className="form-textarea" value={x.seoDescription} onChange={e=>patch(i,{seoDescription:e.target.value})}/></label>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={x.featured} onChange={e=>patch(i,{featured:e.target.checked})}/> Feature this post first</label>
+          <div className="flex flex-wrap justify-end gap-4">{x.status==="Draft"?<button className="text-sm text-[var(--accent)]" type="button" onClick={()=>void publishExisting(x.id)}>Publish</button>:<button className="text-sm text-[var(--accent)]" type="button" onClick={()=>void notify(x.id)}>Save + notify subscribers</button>}<button className="text-sm text-red-300" type="button" onClick={()=>{if(window.confirm("Delete this blog post from the draft?"))setData({...data,blog:data.blog.filter(item=>item.id!==x.id)})}}>Delete</button></div>
+        </div>
+      </details>;
+    })}
+    {composer ? <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/75 p-4 sm:p-8" role="dialog" aria-modal="true" aria-labelledby="new-post-title">
+      <form className="admin-card my-4 w-full max-w-5xl border-white/20 bg-[#0d0d10] shadow-2xl" onSubmit={e=>{e.preventDefault();void commit("Published");}}>
+        <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-5"><div><p className="eyebrow">New blog post</p><h2 id="new-post-title" className="mt-2 text-3xl font-medium tracking-[-.04em]">Write and publish</h2></div><button className="text-sm text-[var(--muted)] hover:text-white" type="button" aria-label="Close new blog post editor" onClick={()=>{setComposer(null);setComposerError("");}}>Close</button></div>
+        {composerError ? <p className="mt-5 text-sm text-red-300" role="alert">{composerError}</p> : null}
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <label className="form-label">Title<input className="form-input" autoFocus value={composer.title} onChange={e=>patchComposer({title:e.target.value})}/></label>
+          <label className="form-label">Slug<input className="form-input" value={composer.slug} onChange={e=>patchComposer({slug:e.target.value})}/></label>
+          <label className="form-label">Category<input className="form-input" value={composer.category} onChange={e=>patchComposer({category:e.target.value})}/></label>
+          <label className="form-label">Tags (comma-separated)<input className="form-input" value={composer.tags.join(", ")} onChange={e=>patchComposer({tags:splitComma(e.target.value)})}/></label>
+          <label className="form-label lg:col-span-2">Excerpt<textarea className="form-textarea" value={composer.excerpt} onChange={e=>patchComposer({excerpt:e.target.value})}/></label>
+          <label className="form-label">Cover image<input className="form-input" type="file" accept="image/jpeg,image/png,image/webp" onChange={async e=>{const f=e.target.files?.[0];if(f)patchComposer({coverImage:await upload(f,"image")});}} />{composer.coverImage?<span className="text-xs text-[var(--muted)]">Current: {composer.coverImage}</span>:null}</label>
+          <label className="form-label lg:col-span-2">Markdown content<textarea className="form-textarea min-h-[24rem] mono text-sm" value={composer.content} onChange={e=>patchComposer({content:e.target.value})}/></label>
+          <label className="form-label">SEO title<input className="form-input" value={composer.seoTitle} onChange={e=>patchComposer({seoTitle:e.target.value})}/></label>
+          <label className="form-label">SEO description<textarea className="form-textarea" value={composer.seoDescription} onChange={e=>patchComposer({seoDescription:e.target.value})}/></label>
+        </div>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-5">
+          <button className={`button ${composer.featured ? "button-primary" : "button-secondary"}`} type="button" onClick={()=>patchComposer({featured:!composer.featured})}>{composer.featured ? "Featured first" : "Feature on blog"}</button>
+          <div className="flex flex-wrap justify-end gap-3"><button className="button button-secondary" type="button" onClick={()=>void commit("Draft")}>Save draft</button><button className="button button-primary" type="submit">Publish post</button></div>
+        </div>
+      </form>
+    </div> : null}
+  </div>;
+}
 
 function CvEditor({data,setData,upload,save}:{data:PortfolioContent;setData:(d:PortfolioContent)=>void;upload:(f:File,k:string)=>Promise<string>;save:(d?:PortfolioContent|null)=>Promise<void>}) { return <div className="admin-card max-w-2xl space-y-5"><p className="text-sm leading-6 text-[var(--muted)]">Upload a PDF. The public Résumé button appears automatically when an active file URL exists. The link remains stable from the site’s perspective even when you replace the file.</p><label className="form-label">Version name<input className="form-input" value={data.cv.version} placeholder="AI / Backend Resume — Aug 2026" onChange={e=>setData({...data,cv:{...data.cv,version:e.target.value}})}/></label><label className="form-label">Résumé label<input className="form-input" value={data.cv.label} onChange={e=>setData({...data,cv:{...data.cv,label:e.target.value}})}/></label><label className="form-label">Upload PDF<input className="form-input" type="file" accept="application/pdf" onChange={async e=>{const f=e.target.files?.[0];if(!f)return;const url=await upload(f,"cv");const next={...data,cv:{...data.cv,activeFileUrl:url,updatedAt:new Date().toISOString()}};setData(next);await save(next);}}/></label>{data.cv.activeFileUrl?<div className="surface p-4"><p className="text-sm">Active: <a className="text-[var(--accent)]" href="/resume">Download the active résumé</a></p><p className="mt-1 text-xs text-[var(--muted)]">Updated {data.cv.updatedAt}</p></div>:null}</div>; }
 
