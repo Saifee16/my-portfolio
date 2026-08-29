@@ -4,6 +4,7 @@ import { isSafeExternalUrl } from "@/lib/content-utils";
 export function ProjectCard({ project, featured = false, paired = false }: { project: Project; featured?: boolean; paired?: boolean }) {
   const repositoryIsPublic = Boolean(project.repoUrl && !/private/i.test(project.repoVisibility) && isSafeExternalUrl(project.repoUrl));
   const liveUrlIsSafe = Boolean(project.liveUrl && isSafeExternalUrl(project.liveUrl));
+  const publicationUrlIsSafe = Boolean(project.publication?.url && isSafeExternalUrl(project.publication.url));
   const statusTone = /shipped|production/i.test(project.status) ? "status-live" : /private alpha/i.test(project.status) ? "status-alpha" : /private development/i.test(project.status) ? "status-development" : /research/i.test(project.status) ? "status-research" : "";
   return (
     <article className={`project-card ${featured ? "featured" : ""} ${paired ? "paired" : ""}`}>
@@ -21,6 +22,7 @@ export function ProjectCard({ project, featured = false, paired = false }: { pro
           <a href={`/projects/${project.slug}`} className="text-link">Case study →</a>
           {repositoryIsPublic ? <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="text-link">Repository ↗</a> : <span className="mono text-[10px] uppercase tracking-[.1em] text-[var(--muted)]">{project.repoVisibility}</span>}
           {liveUrlIsSafe ? <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-link">Live ↗</a> : null}
+          {project.publication ? publicationUrlIsSafe ? <a href={project.publication.url} target="_blank" rel="noopener noreferrer" className="text-link">{project.publication.label || "Research paper"} ↗</a> : <span className="button button-disabled">Research paper · {project.publication.status}</span> : null}
         </div>
       </div>
     </article>

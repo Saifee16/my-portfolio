@@ -4,7 +4,7 @@ export async function Hero() {
   const { profile, cv } = await getContent();
   return (
     <section id="top" className="relative overflow-hidden">
-      <div className="shell py-14 sm:py-16 lg:py-20">
+      <div className="shell py-14 sm:py-16 lg:py-16">
         <div>
           <div className="mb-6 flex min-w-0 items-center gap-3"><span className="h-12 w-[2px] bg-[var(--accent)]" aria-hidden="true" /><p className="eyebrow min-w-0 break-words">{profile.title}</p></div>
           <h1 className="max-w-[1320px] text-balance text-[clamp(3.4rem,7.2vw,7.4rem)] font-medium leading-[.91] tracking-[-.062em] text-white">{profile.hero}</h1>

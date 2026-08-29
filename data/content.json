@@ -205,7 +205,12 @@
       "caseStudy": "MS-ADA is an academic research prototype that combines computer vision components into an interpretable temporal event pipeline. It is intentionally presented as research rather than as deployment-grade traffic safety infrastructure.",
       "limitations": "Academic prototype; no claim of production readiness or universal accident-detection accuracy. Research-paper citation will be added after formal publication.",
       "featured": false,
-      "documents": []
+      "documents": [],
+      "publication": {
+        "status": "In preparation",
+        "label": "Read research paper",
+        "url": ""
+      }
     }
   ],
   "experience": [

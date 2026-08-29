@@ -82,6 +82,8 @@ test("markdown output escapes HTML and supports safe code fences", () => {
   assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
   assert.match(html, /<pre><code class="language-ts">[\s\S]*&lt;x&gt;/);
   assert.doesNotMatch(html, /href="javascript:/);
+  assert.match(renderMarkdown("[Project](/projects/pdf-rag-chatbot)"), /href="\/projects\/pdf-rag-chatbot"/);
+  assert.doesNotMatch(renderMarkdown("[Bad](/admin/login)"), /href="\/admin\/login"/);
 });
 
 test("upload validation checks file signatures instead of trusting MIME alone", () => {
