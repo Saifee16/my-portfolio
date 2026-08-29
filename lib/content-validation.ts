@@ -1,5 +1,6 @@
 import type { BlogPost, Certification, Education, Experience, PortfolioContent, Project, ProjectDocument, ResearchItem } from "./types.ts";
 import { isAssetUrl, isPdfAssetUrl } from "./asset-url.ts";
+import { editorialMigration, editorialPosts } from "./editorial-content.ts";
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -53,8 +54,20 @@ function isProject(value: unknown): value is Project {
     isString(value.caseStudy, 20_000) &&
     isString(value.limitations, 5_000) &&
      typeof value.featured === "boolean" &&
+     (value.publication === undefined || isResearchPublication(value.publication)) &&
      (value.documents === undefined || (Array.isArray(value.documents) && value.documents.length <= 20 && value.documents.every(isProjectDocument)))
   );
+}
+
+function isEditorialCoverUrl(value: unknown) {
+  return typeof value === "string" && /^\/media\/editorial\/[a-z0-9-]+\.svg$/i.test(value);
+}
+
+function isResearchPublication(value: unknown) {
+  return isRecord(value) &&
+    (value.status === "Planned" || value.status === "In preparation" || value.status === "Preprint available" || value.status === "Published") &&
+    isString(value.label, 240) &&
+    isHttpUrl(value.url);
 }
 
 function isProjectDocument(value: unknown): value is ProjectDocument {
@@ -63,12 +76,21 @@ function isProjectDocument(value: unknown): value is ProjectDocument {
 
 export function normalizePortfolioContent(input: unknown): PortfolioContent {
   if (!isRecord(input) || !Array.isArray(input.projects)) return input as PortfolioContent;
+  const migrations = isStringArray(input.migrations, 120, 40) ? input.migrations : [];
+  const hasEditorialMigration = migrations.includes(editorialMigration);
+  const blog = Array.isArray(input.blog) ? input.blog : [];
   return {
     ...input,
     projects: input.projects.map(project => {
-      if (!isRecord(project) || Object.prototype.hasOwnProperty.call(project, "documents")) return project;
-      return { ...project, documents: [] };
+      if (!isRecord(project)) return project;
+      const normalized = Object.prototype.hasOwnProperty.call(project, "documents") ? project : { ...project, documents: [] };
+      if (normalized.slug !== "ms-ada" || Object.prototype.hasOwnProperty.call(normalized, "publication")) return normalized;
+      return { ...normalized, publication: { status: "In preparation", label: "Read research paper", url: "" } };
     }),
+    blog: !hasEditorialMigration
+      ? [...blog, ...editorialPosts.filter(post => !blog.some(item => isRecord(item) && item.slug === post.slug))]
+      : blog,
+    migrations: hasEditorialMigration ? migrations : [...migrations, editorialMigration],
   } as PortfolioContent;
 }
 
@@ -89,7 +111,7 @@ function isResearch(value: unknown): value is ResearchItem {
 }
 
 function isBlogPost(value: unknown): value is BlogPost {
-  if (!isRecord(value) || !isString(value.id, 120) || !isSlug(value.slug) || !isString(value.title, 240) || !isString(value.excerpt, 2_000) || !isString(value.content, 200_000) || !isString(value.category, 120) || !isStringArray(value.tags, 80, 40) || (value.status !== "Draft" && value.status !== "Published") || !isString(value.publishedAt, 80) || !isString(value.seoTitle, 240) || !isString(value.seoDescription, 2_000) || !isHttpUrl(value.coverImage) || !isAssetUrl(value.coverImage) || typeof value.featured !== "boolean") return false;
+  if (!isRecord(value) || !isString(value.id, 120) || !isSlug(value.slug) || !isString(value.title, 240) || !isString(value.excerpt, 2_000) || !isString(value.content, 200_000) || !isString(value.category, 120) || !isStringArray(value.tags, 80, 40) || (value.status !== "Draft" && value.status !== "Published") || !isString(value.publishedAt, 80) || !isString(value.seoTitle, 240) || !isString(value.seoDescription, 2_000) || !isHttpUrl(value.coverImage) || !(isAssetUrl(value.coverImage) || isEditorialCoverUrl(value.coverImage)) || typeof value.featured !== "boolean") return false;
   if (value.status === "Published" && (value.publishedAt === "" || Number.isNaN(new Date(value.publishedAt).getTime()))) return false;
   return value.status === "Draft" ? value.publishedAt === "" : !Number.isNaN(new Date(value.publishedAt).getTime());
 }
@@ -123,6 +145,7 @@ export function isPortfolioContent(input: unknown): input is PortfolioContent {
   if (!Array.isArray(input.certifications) || input.certifications.length > 200 || !input.certifications.every(isCertification)) return false;
   if (!Array.isArray(input.research) || input.research.length > 100 || !input.research.every(isResearch)) return false;
   if (!Array.isArray(input.blog) || input.blog.length > 200 || !input.blog.every(isBlogPost)) return false;
+  if (input.migrations !== undefined && !isStringArray(input.migrations, 120, 40)) return false;
   if (new Set(input.projects.map(project => project.slug)).size !== input.projects.length) return false;
   if (new Set(input.blog.map(post => post.slug)).size !== input.blog.length) return false;
   if (!isString(cv.label, 120) || !isAssetUrl(cv.activeFileUrl) || !isString(cv.version, 160) || !isString(cv.updatedAt, 80)) return false;

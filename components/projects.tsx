@@ -11,7 +11,7 @@ export async function Projects() {
   const pairedFlagships = flagship.slice(1, 3);
   const compactFlagships = flagship.slice(3);
   return (
-    <section id="work" className="section">
+    <section id="work" className="section pt-12 sm:pt-14 lg:pt-16">
       <SectionHeading index="01" eyebrow="Selected engineering" title="Systems built around reliability, evidence, and real constraints." description="The first four projects form a deliberate engineering progression: backend foundations → evaluated ML → LLM infrastructure → secure retrieval systems. Product and research work follows with its maturity labeled clearly." />
       <div className="mt-10 space-y-4">
         {primaryFlagship ? <ProjectCard project={primaryFlagship} featured key={primaryFlagship.slug} /> : null}

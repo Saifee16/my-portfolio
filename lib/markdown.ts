@@ -20,6 +20,11 @@ function inline(input: string) {
       codeTokens.push(`<code>${code}</code>`);
       return token;
     })
+    .replace(/\[([^\]]+)\]\((\/(?:projects|blog)\/[a-z0-9-]+)\)/g, (_, label: string, url: string) => {
+      const token = `@@LINK${linkTokens.length}@@`;
+      linkTokens.push(`<a href="${url}">${label}</a>`);
+      return token;
+    })
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, label: string, url: string) => {
       const token = `@@LINK${linkTokens.length}@@`;
       linkTokens.push(`<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`);

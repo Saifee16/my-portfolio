@@ -15,6 +15,12 @@ export type ProjectDocument = {
   assetUrl: string;
 };
 
+export type ResearchPublication = {
+  status: "Planned" | "In preparation" | "Preprint available" | "Published";
+  label: string;
+  url: string;
+};
+
 export type Project = {
   slug: string;
   rank: number;
@@ -33,6 +39,7 @@ export type Project = {
   limitations: string;
   featured: boolean;
   documents: ProjectDocument[];
+  publication?: ResearchPublication;
 };
 
 export type Experience = {
@@ -129,6 +136,7 @@ export type PortfolioContent = {
     phoneVisible: boolean;
     projectOrderMode: string;
   };
+  migrations?: string[];
 };
 
 export type Subscriber = {
