@@ -14,7 +14,7 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
-  deploymentId: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 32),
+  deploymentId: process.env.VERCEL_DEPLOYMENT_ID || process.env.NEXT_DEPLOYMENT_ID,
   poweredByHeader: false,
   reactStrictMode: true,
   images: {
