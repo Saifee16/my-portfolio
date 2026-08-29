@@ -96,5 +96,5 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .admin-sidebar a:hover { color:white; background:rgba(255,255,255,.025); border-left-color:var(--accent); }
 
 @media (min-width: 640px) { .shell { padding-inline:2rem; } .section { padding:5rem 2rem 0; } .project-card { padding:2rem; } }
-@media (min-width: 1024px) { .shell { padding-inline:3rem; } .section { padding:6.5rem 3rem 0; } .project-card { padding:2.5rem; } .project-card.paired { display:flex; flex-direction:column; } .project-card.paired .project-card-stack { margin-top:auto; padding-top:2rem; } .timeline-item { grid-template-columns:220px 1fr; gap:2rem; } }
+@media (min-width: 1024px) { .shell { padding-inline:3rem; } .section { padding:6.5rem 3rem 0; } .project-card { padding:2.5rem; } .project-card.paired { display:flex; flex-direction:column; } .project-card.paired .project-card-footer { margin-top:auto; padding-top:2rem; } .timeline-item { grid-template-columns:220px 1fr; gap:2rem; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; } }

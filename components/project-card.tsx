@@ -15,11 +15,13 @@ export function ProjectCard({ project, featured = false, paired = false }: { pro
         <h3 className={featured ? "max-w-4xl text-4xl font-medium tracking-[-.05em] sm:text-6xl lg:text-7xl" : "text-3xl font-medium tracking-[-.045em] sm:text-4xl"}>{project.title}</h3>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--copy)]">{project.subtitle}</p>
       </div>
-      <div className="project-card-stack mt-8 flex flex-wrap gap-2">{project.stack.slice(0, featured ? 8 : 5).map(item => <span className="chip" key={item}>{item}</span>)}</div>
-      <div className="project-card-actions mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-white/10 pt-5">
-        <a href={`/projects/${project.slug}`} className="text-link">Case study →</a>
-        {repositoryIsPublic ? <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="text-link">Repository ↗</a> : <span className="mono text-[10px] uppercase tracking-[.1em] text-[var(--muted)]">{project.repoVisibility}</span>}
-        {liveUrlIsSafe ? <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-link">Live ↗</a> : null}
+      <div className="project-card-footer mt-8">
+        <div className="project-card-stack flex flex-wrap gap-2">{project.stack.slice(0, featured ? 8 : 5).map(item => <span className="chip" key={item}>{item}</span>)}</div>
+        <div className="project-card-actions mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-white/10 pt-5">
+          <a href={`/projects/${project.slug}`} className="text-link">Case study →</a>
+          {repositoryIsPublic ? <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="text-link">Repository ↗</a> : <span className="mono text-[10px] uppercase tracking-[.1em] text-[var(--muted)]">{project.repoVisibility}</span>}
+          {liveUrlIsSafe ? <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-link">Live ↗</a> : null}
+        </div>
       </div>
     </article>
   );
