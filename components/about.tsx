@@ -3,10 +3,11 @@ import { getContent } from "@/lib/cms";
 import { SectionHeading } from "@/components/section-heading";
 
 export async function AboutSection() {
-  const { profile } = await getContent();
+  const { profile, blog } = await getContent();
+  const index = blog.some(post => post.status === "Published") ? "05" : "04";
   return (
     <section id="about" className="section">
-      <SectionHeading index="05" eyebrow="Profile" title="Applied AI depth. Full-stack breadth. Backend discipline." />
+      <SectionHeading index={index} eyebrow="Profile" title="Applied AI depth. Full-stack breadth. Backend discipline." />
       <div className={`${profile.photoUrl ? "grid gap-5 lg:grid-cols-[.7fr_1.3fr]" : ""}`}>
         {profile.photoUrl ? <div className="surface min-h-[22rem] overflow-hidden p-5"><Image src={profile.photoUrl} alt={`${profile.name} professional portrait`} width={900} height={1100} className="h-full min-h-[20rem] w-full object-cover grayscale" /></div> : null}
         <div className={`surface p-6 sm:p-10 ${profile.photoUrl ? "" : "max-w-5xl"}`}>

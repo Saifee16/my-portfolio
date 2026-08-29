@@ -22,8 +22,8 @@ export async function Navbar() {
           {visibleNav.map(([label, href]) => <Link key={href} href={`/${href}`} className="nav-link">{label}</Link>)}
         </nav>
         <div className="flex items-center gap-4">
-          {content.cv.activeFileUrl ? <a className="nav-link text-white" href="/resume" download>Résumé ↓</a> : null}
-          <a className="nav-link text-white" href={content.profile.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          {content.cv.activeFileUrl ? <a className="nav-link inline-flex min-h-11 items-center text-white" href="/resume" download>Résumé ↓</a> : null}
+          <a className="nav-link inline-flex min-h-11 items-center text-white" href={content.profile.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
           <MobileNav links={visibleNav} />
         </div>
       </div>
