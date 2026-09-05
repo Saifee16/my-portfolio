@@ -78,14 +78,14 @@ export async function saveSubscribers(items: Subscriber[], expectedEtag?: string
 }
 
 export async function getAnalytics(storage = getStorage()): Promise<AnalyticsEvent[]> {
-  if (storage.driver === "vercel-blob") return [];
+  if (storage.driver === "vercel-blob" || storage.driver === "r2") return [];
   const payload = await readJson<{ events: AnalyticsEvent[] }>(storage, analyticsKey, { events: [] });
   return payload.value.events;
 }
 
 export async function recordAnalytics(event: AnalyticsEvent, storage = getStorage()) {
   // ponytail: Blob-backed page-view writes would turn normal browsing into a write-heavy analytics store.
-  if (storage.driver === "vercel-blob") return;
+  if (storage.driver === "vercel-blob" || storage.driver === "r2") return;
   const payload = await readJson<{ events: AnalyticsEvent[] }>(storage, analyticsKey, { events: [] });
   const trimmed = [...payload.value.events, event].slice(-5000);
   await storage.writePrivateText(analyticsKey, JSON.stringify({ events: trimmed }, null, 2), payload.etag ? { ifMatch: payload.etag } : undefined);
