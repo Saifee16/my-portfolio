@@ -3,8 +3,8 @@ import { getContent } from "@/lib/cms";
 import { SectionHeading } from "@/components/section-heading";
 
 export async function AboutSection() {
-  const { profile, blog } = await getContent();
-  const index = blog.some(post => post.status === "Published") ? "05" : "04";
+  const { profile, blog, research } = await getContent();
+  const index = String(4 + (research.length ? 1 : 0) + (blog.some(post => post.status === "Published") ? 1 : 0)).padStart(2, "0");
   return (
     <section id="about" className="section">
       <SectionHeading index={index} eyebrow="Profile" title="Applied AI depth. Full-stack breadth. Backend discipline." />
