@@ -3,7 +3,7 @@ import { isAdmin } from "@/lib/auth";
 import { LogoutButton } from "@/components/admin/logout-button";
 
 const links = [
-  ["Dashboard", "/admin"], ["Profile", "/admin/profile"], ["Projects", "/admin/projects"], ["Experience", "/admin/experience"], ["Education", "/admin/education"], ["Research", "/admin/research"], ["Blog", "/admin/blog"], ["CV / Resume", "/admin/cv"], ["Newsletter", "/admin/newsletter"], ["Settings", "/admin/settings"],
+  ["Dashboard", "/admin"], ["Profile", "/admin/profile"], ["Projects", "/admin/projects"], ["Experience", "/admin/experience"], ["Education", "/admin/education"], ["Research", "/admin/research"], ["Proof & activity", "/admin/proof"], ["Blog", "/admin/blog"], ["CV / Resume", "/admin/cv"], ["Newsletter", "/admin/newsletter"], ["Settings", "/admin/settings"],
 ] as const;
 
 export async function AdminShell({ children }: { children: React.ReactNode }) {

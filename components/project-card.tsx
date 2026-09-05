@@ -1,5 +1,6 @@
 import type { Project } from "@/lib/types";
 import { isSafeExternalUrl } from "@/lib/content-utils";
+import Image from "next/image";
 
 export function ProjectCard({ project, featured = false, paired = false }: { project: Project; featured?: boolean; paired?: boolean }) {
   const repositoryIsPublic = Boolean(project.repoUrl && !/private/i.test(project.repoVisibility) && isSafeExternalUrl(project.repoUrl));
@@ -8,6 +9,7 @@ export function ProjectCard({ project, featured = false, paired = false }: { pro
   const statusTone = /shipped|production/i.test(project.status) ? "status-live" : /private alpha/i.test(project.status) ? "status-alpha" : /private development/i.test(project.status) ? "status-development" : /research/i.test(project.status) ? "status-research" : "";
   return (
     <article className={`project-card ${featured ? "featured" : ""} ${paired ? "paired" : ""}`}>
+      {project.visuals?.[0]?.assetUrl ? <Image src={project.visuals[0].assetUrl} alt={project.visuals[0].alt || project.visuals[0].title} width={1600} height={900} className="mb-8 aspect-video w-full object-cover opacity-90" /> : null}
       <div className="flex items-start justify-between gap-4 mono text-[10px] uppercase tracking-[.15em] text-[var(--muted)]">
         <span>{String(project.rank).padStart(2, "0")} / {project.category}</span>
         <span className={`status ${statusTone}`}>{project.status}</span>

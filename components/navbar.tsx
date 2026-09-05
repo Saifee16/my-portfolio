@@ -3,23 +3,23 @@ import { getContent } from "@/lib/cms";
 import { MobileNav } from "@/components/mobile-nav";
 
 const nav = [
-  ["Work", "#work"],
-  ["Experience", "#experience"],
-  ["Education", "#education"],
-  ["Writing", "#writing"],
-  ["About", "#about"],
-  ["Contact", "#contact"],
+  ["Work", "/#work"],
+  ["Experience", "/experience"],
+  ["Research", "/research"],
+  ["Writing", "/#writing"],
+  ["About", "/#about"],
+  ["Contact", "/#contact"],
 ] as const;
 
 export async function Navbar() {
   const content = await getContent();
-  const visibleNav = content.blog.some(post => post.status === "Published") ? nav : nav.filter(([, href]) => href !== "#writing");
+  const visibleNav = content.blog.some(post => post.status === "Published") ? nav : nav.filter(([, href]) => href !== "/#writing");
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[rgba(8,8,10,.86)] backdrop-blur-xl">
       <div className="shell flex h-16 items-center justify-between gap-4">
         <Link href="/#top" className="mono text-xs font-semibold uppercase tracking-[.18em] text-white">Saifullah<span className="text-[var(--accent)]">.</span></Link>
         <nav className="hidden items-center gap-5 lg:flex" aria-label="Primary navigation">
-          {visibleNav.map(([label, href]) => <Link key={href} href={`/${href}`} className="nav-link">{label}</Link>)}
+          {visibleNav.map(([label, href]) => <Link key={href} href={href} className="nav-link">{label}</Link>)}
         </nav>
         <div className="flex items-center gap-4">
           {content.cv.activeFileUrl ? <a className="nav-link inline-flex min-h-11 items-center text-white" href="/resume" download>Résumé ↓</a> : null}

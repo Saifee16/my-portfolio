@@ -1,14 +1,13 @@
 import { getContent } from "@/lib/cms";
 import { SectionHeading } from "@/components/section-heading";
 import { formatEducationPeriod } from "@/lib/content-utils";
-import Link from "next/link";
 
 export async function EducationSection() {
-  const { education, certifications, research } = await getContent();
+  const { education, certifications } = await getContent();
   const featured = certifications.filter(c => c.featured).slice(0, 6);
   return (
     <section id="education" className="section">
-      <SectionHeading index="03" eyebrow="Education & research" title="From telecommunications and computer vision toward applied AI systems." />
+      <SectionHeading index="03" eyebrow="Education" title="From telecommunications and computer vision toward applied AI systems." />
       <div className="mt-9 grid gap-5 lg:grid-cols-2">
         {education.map((item, idx) => (
           <article className="surface p-6 sm:p-8" key={`${item.degree}-${idx}`}>
@@ -20,13 +19,7 @@ export async function EducationSection() {
           </article>
         ))}
       </div>
-      <div className={`mt-5 grid gap-5 ${featured.length ? "lg:grid-cols-[1.2fr_.8fr]" : ""}`}>
-        <div className={`surface p-6 sm:p-8 ${featured.length ? "" : "lg:col-span-2"}`}>
-          <div className="eyebrow">Research</div>
-          {research.map((item, idx) => <div className="mt-7" key={`${item.title}-${idx}`}><h3 className="text-xl font-medium leading-7">{item.title}</h3><p className="mt-2 mono text-[10px] uppercase tracking-[.12em] text-[var(--accent)]">{item.status}</p><p className="mt-3 leading-7 text-[var(--copy)]">{item.description}</p><div className="mt-5 flex flex-wrap gap-5">{item.url ? <a className="text-link" href={item.url} target="_blank" rel="noopener noreferrer">Read research paper ↗</a> : <span className="button button-disabled" aria-disabled="true">Research paper · In preparation</span>}{item.doi ? <a className="text-link" href={`https://doi.org/${encodeURIComponent(item.doi)}`} target="_blank" rel="noopener noreferrer">DOI ↗</a> : null}</div></div>)}
-        </div>
-        {featured.length ? <div className="surface p-6 sm:p-8"><div className="eyebrow">Featured certifications</div><div className="mt-6 space-y-4">{featured.map(cert => <div key={cert.id} className="border-t border-white/10 pt-4"><p className="font-medium">{cert.name}</p><p className="mt-1 text-sm text-[var(--muted)]">{cert.issuer} · {cert.issueDate}</p></div>)}</div><Link className="text-link mt-7 inline-flex" href="/certifications">View all certifications →</Link></div> : null}
-      </div>
+      {featured.length ? <div className="mt-5 surface p-6 sm:p-8"><div className="eyebrow">Featured certifications</div><div className="mt-6 grid gap-4 sm:grid-cols-2">{featured.map(cert => <div key={cert.id} className="border-t border-white/10 pt-4"><p className="font-medium">{cert.name}</p><p className="mt-1 text-sm text-[var(--muted)]">{cert.issuer} · {cert.issueDate}</p></div>)}</div><a className="text-link mt-7 inline-flex" href="/certifications">View all certifications →</a></div> : null}
     </section>
   );
 }

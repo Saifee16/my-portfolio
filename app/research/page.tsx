@@ -1,0 +1,14 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { getContent } from "@/lib/cms";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+
+export const dynamic = "force-dynamic";
+export const metadata: Metadata = { title: "Research", description: "Research work, publications, and papers by Saifullah Suleman.", alternates: { canonical: "/research" } };
+
+export default async function ResearchPage() {
+  const { research, profile } = await getContent();
+  const items = [...research].sort((a, b) => Number(b.featured) - Number(a.featured) || Number(b.year || 0) - Number(a.year || 0));
+  return <><Navbar /><main className="section"><Link className="text-link" href="/#research">← Back to home</Link><div className="mt-10 border-t border-white/10 pt-6"><p className="eyebrow">Research / publications</p><h1 className="mt-6 max-w-5xl text-[clamp(3rem,7vw,7rem)] font-medium leading-[.92] tracking-[-.06em]">Research that stays explicit about evidence and limits.</h1><p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--copy)]">{profile.name}&apos;s research pipeline, publication status, and paper links.</p></div><div className="mt-14 space-y-5">{items.length ? items.map((item, index) => <article className="surface p-6 sm:p-8" key={`${item.title}-${index}`}><div className="flex flex-wrap items-center justify-between gap-3"><p className="eyebrow">{item.status}</p><p className="mono text-[10px] uppercase tracking-[.13em] text-[var(--muted)]">{item.year || "Year pending"}{item.citationCount !== "" ? ` · ${item.citationCount} citations` : ""}</p></div><h2 className="mt-5 max-w-4xl text-3xl font-medium tracking-[-.04em] sm:text-4xl">{item.title}</h2><p className="mt-2 text-sm text-[var(--accent)]">{item.authors}{item.venue ? ` · ${item.venue}` : ""}</p>{item.abstract ? <p className="mt-6 max-w-4xl text-lg leading-8 text-[var(--copy)]">{item.abstract}</p> : <p className="mt-6 max-w-4xl leading-7 text-[var(--copy)]">{item.description}</p>}<div className="mt-7 flex flex-wrap gap-5">{item.publicationUrl ? <a className="text-link" href={item.publicationUrl} target="_blank" rel="noopener noreferrer">Publication ↗</a> : null}{item.pdfUrl ? <a className="text-link" href={item.pdfUrl} target="_blank" rel="noopener noreferrer">Paper PDF ↗</a> : null}{item.doi ? <a className="text-link" href={`https://doi.org/${encodeURIComponent(item.doi)}`} target="_blank" rel="noopener noreferrer">DOI ↗</a> : null}{!item.publicationUrl && !item.pdfUrl && !item.doi ? <span className="mono text-[10px] uppercase tracking-[.12em] text-[var(--muted)]">Publication link pending</span> : null}</div></article>) : <div className="surface p-8"><p className="eyebrow">No public items yet</p><p className="mt-4 max-w-xl text-lg leading-8 text-[var(--copy)]">Research entries will appear here once their publication status and supporting links are ready.</p></div>}</div></main><Footer /></>;
+}

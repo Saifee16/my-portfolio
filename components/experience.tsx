@@ -1,5 +1,6 @@
 import { getContent } from "@/lib/cms";
 import { SectionHeading } from "@/components/section-heading";
+import Link from "next/link";
 
 export async function ExperienceSection() {
   const { experience } = await getContent();
@@ -24,6 +25,7 @@ export async function ExperienceSection() {
                     <h4 className="text-2xl font-medium tracking-[-.035em]">{item.title}</h4>
                     <p className="mt-1 text-sm text-[var(--accent)]">{item.organization}</p>
                     <p className="mt-4 max-w-3xl leading-7 text-[var(--copy)]">{item.description}</p>
+                    {item.highlights.length ? <ul className="mt-4 grid max-w-3xl gap-2 pl-5 text-sm leading-7 text-[var(--copy)] sm:grid-cols-2">{item.highlights.slice(0, 4).map(highlight => <li className="list-disc" key={highlight}>{highlight}</li>)}</ul> : null}
                   </div>
                 </article>
               ))}
@@ -31,6 +33,7 @@ export async function ExperienceSection() {
           </div>
         ) : null)}
       </div>
+      <Link className="text-link mt-8 inline-flex" href="/experience">View full experience →</Link>
     </section>
   );
 }

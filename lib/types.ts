@@ -15,6 +15,13 @@ export type ProjectDocument = {
   assetUrl: string;
 };
 
+export type ProjectVisual = {
+  id: string;
+  title: string;
+  alt: string;
+  assetUrl: string;
+};
+
 export type ResearchPublication = {
   status: "Planned" | "In preparation" | "Preprint available" | "Published";
   label: string;
@@ -39,6 +46,9 @@ export type Project = {
   limitations: string;
   featured: boolean;
   documents: ProjectDocument[];
+  role: string;
+  outcomes: string[];
+  visuals: ProjectVisual[];
   publication?: ResearchPublication;
 };
 
@@ -47,6 +57,8 @@ export type Experience = {
   organization: string;
   period: string;
   description: string;
+  highlights: string[];
+  links: { label: string; url: string }[];
 };
 
 export type Education = {
@@ -79,6 +91,56 @@ export type ResearchItem = {
   url: string;
   year: number | "";
   description: string;
+  abstract: string;
+  pdfUrl: string;
+  publicationUrl: string;
+  citationCount: number | "";
+  featured: boolean;
+};
+
+export type ImpactMetric = {
+  id: string;
+  label: string;
+  value: string;
+  detail: string;
+  sourceUrl: string;
+  visible: boolean;
+};
+
+export type SkillGroup = {
+  id: string;
+  category: string;
+  skills: string[];
+  visible: boolean;
+};
+
+export type NowEntry = {
+  id: string;
+  title: string;
+  summary: string;
+  updatedAt: string;
+  links: { label: string; url: string }[];
+  visible: boolean;
+};
+
+export type Testimonial = {
+  id: string;
+  quote: string;
+  author: string;
+  role: string;
+  organization: string;
+  profileUrl: string;
+  visible: boolean;
+};
+
+export type CommunityRole = {
+  id: string;
+  title: string;
+  organization: string;
+  period: string;
+  description: string;
+  url: string;
+  visible: boolean;
 };
 
 export type BlogPost = {
@@ -118,6 +180,15 @@ export type PortfolioContent = {
   education: Education[];
   certifications: Certification[];
   research: ResearchItem[];
+  impact: ImpactMetric[];
+  skills: SkillGroup[];
+  now: NowEntry[];
+  testimonials: Testimonial[];
+  community: CommunityRole[];
+  activity: {
+    enabled: boolean;
+    githubUrl: string;
+  };
   blog: BlogPost[];
   cv: {
     label: string;
