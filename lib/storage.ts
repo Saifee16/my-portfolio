@@ -14,7 +14,7 @@ import {
 } from "@vercel/blob";
 import { isBlobAssetUrl, isControlledAssetUrl, isLocalAssetUrl, isAssetFilename } from "./asset-url.ts";
 
-export type StorageDriver = "filesystem" | "vercel-blob";
+export type StorageDriver = "filesystem" | "vercel-blob" | "r2";
 
 export type StoredObject = {
   pathname: string;
@@ -69,6 +69,14 @@ export class StorageDataError extends Error {
 
 function etag(bytes: Uint8Array) {
   return crypto.createHash("sha256").update(bytes).digest("hex");
+}
+
+function sha256(value: string | Uint8Array) {
+  return crypto.createHash("sha256").update(value).digest("hex");
+}
+
+function hmac(key: Uint8Array | string, value: string) {
+  return crypto.createHmac("sha256", key).update(value).digest();
 }
 
 function safeChildPath(root: string, child: string) {
@@ -333,11 +341,114 @@ export function createBlobStorage(api: BlobStorageApi = { put, get, head, del })
   };
 }
 
+type R2Config = { endpoint: string; bucket: string; accessKeyId: string; secretAccessKey: string };
+
+function r2Config(): R2Config {
+  const endpoint = process.env.R2_ENDPOINT?.trim();
+  const bucket = process.env.R2_BUCKET_NAME?.trim();
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID?.trim();
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY?.trim();
+  if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) throw new Error("R2 storage is not configured");
+  return { endpoint: endpoint.replace(/\/$/, ""), bucket, accessKeyId, secretAccessKey };
+}
+
+function r2Path(config: R2Config, key: string) {
+  const normalized = key.replaceAll("\\", "/");
+  if (!normalized || normalized.startsWith("/") || normalized.split("/").some(part => part === ".." || part === ".")) throw new Error("Unsafe R2 pathname");
+  return `/${encodeURIComponent(config.bucket)}/${normalized.split("/").map(encodeURIComponent).join("/")}`;
+}
+
+async function r2Request(config: R2Config, method: "GET" | "PUT" | "HEAD" | "DELETE", key: string, body?: Uint8Array, options?: { contentType?: string; ifMatch?: string }) {
+  const endpoint = new URL(config.endpoint);
+  const canonicalUri = r2Path(config, key);
+  const payloadHash = body ? sha256(body) : sha256(new Uint8Array());
+  const amzDate = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  const date = amzDate.slice(0, 8);
+  const host = endpoint.host;
+  const headers = new Headers({ host, "x-amz-content-sha256": payloadHash, "x-amz-date": amzDate });
+  if (options?.contentType) headers.set("content-type", options.contentType);
+  if (options?.ifMatch) headers.set("if-match", options.ifMatch);
+  const canonicalHeaders = [...headers.entries()].sort(([left], [right]) => left.localeCompare(right)).map(([name, value]) => `${name}:${value.trim().replace(/\s+/g, " ")}\n`).join("");
+  const signedHeaders = [...headers.keys()].sort().join(";");
+  const canonicalRequest = [method, canonicalUri, "", canonicalHeaders, signedHeaders, payloadHash].join("\n");
+  const scope = `${date}/auto/s3/aws4_request`;
+  const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${scope}\n${sha256(canonicalRequest)}`;
+  const signingKey = hmac(hmac(hmac(hmac(`AWS4${config.secretAccessKey}`, date), "auto"), "s3"), "aws4_request");
+  const signature = crypto.createHmac("sha256", signingKey).update(stringToSign).digest("hex");
+  headers.set("authorization", `AWS4-HMAC-SHA256 Credential=${config.accessKeyId}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`);
+  return fetch(`${endpoint.origin}${canonicalUri}`, { method, headers, body: body ? Buffer.from(body) : undefined, cache: "no-store" });
+}
+
+export function createR2Storage(config = r2Config()): StorageAdapter {
+  return {
+    driver: "r2",
+
+    async readPrivateText(key, options) {
+      let response = await r2Request(config, "GET", `cms/${key}`);
+      if (response.status === 404 && options?.bootstrapFile) {
+        const seed = await readFileIfPresent(options.bootstrapFile);
+        if (seed) {
+          const created = await r2Request(config, "PUT", `cms/${key}`, new Uint8Array(seed), { contentType: "application/json" });
+          if (!created.ok && created.status !== 409) throw new Error(`R2 bootstrap failed (${created.status})`);
+          response = await r2Request(config, "GET", `cms/${key}`);
+        }
+      }
+      if (response.status === 404) return null;
+      if (!response.ok) throw new Error(`R2 read failed (${response.status})`);
+      return { text: await response.text(), etag: response.headers.get("etag")?.replaceAll('"', "") ?? "" };
+    },
+
+    async writePrivateText(key, text, options) {
+      const bytes = new TextEncoder().encode(text);
+      const response = await r2Request(config, "PUT", `cms/${key}`, bytes, { contentType: "application/json", ifMatch: options?.ifMatch });
+      if (response.status === 412) throw new StorageConflictError();
+      if (!response.ok) throw new Error(`R2 write failed (${response.status})`);
+      return { pathname: key, url: key, etag: response.headers.get("etag")?.replaceAll('"', "") ?? etag(bytes) };
+    },
+
+    async deletePrivateObject(key, options) {
+      const response = await r2Request(config, "DELETE", `cms/${key}`, undefined, { ifMatch: options?.ifMatch });
+      if (response.status === 404) return;
+      if (response.status === 412) throw new StorageConflictError();
+      if (!response.ok) throw new Error(`R2 delete failed (${response.status})`);
+    },
+
+    async uploadAsset(filename, bytes, contentType) {
+      if (!isAssetFilename(filename)) throw new Error("Unsafe asset filename");
+      const response = await r2Request(config, "PUT", `uploads/${filename}`, bytes, { contentType });
+      if (!response.ok) throw new Error(`R2 upload failed (${response.status})`);
+      return { pathname: `uploads/${filename}`, url: `/media/${filename}`, etag: response.headers.get("etag")?.replaceAll('"', "") ?? etag(bytes) };
+    },
+
+    async readAsset(url) {
+      if (isControlledAssetUrl(url)) {
+        const filename = url.slice("/media/".length);
+        const response = await r2Request(config, "GET", `uploads/${filename}`);
+        if (response.status === 404) return null;
+        if (!response.ok) throw new Error(`R2 asset read failed (${response.status})`);
+        return { bytes: new Uint8Array(await response.arrayBuffer()), contentType: response.headers.get("content-type") ?? contentTypeForFilename(filename) };
+      }
+      if (!isBlobAssetUrl(url)) return null;
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) return null;
+      return { bytes: new Uint8Array(await response.arrayBuffer()), contentType: response.headers.get("content-type") ?? contentTypeForFilename(new URL(url).pathname) };
+    },
+
+    async deleteAsset(url) {
+      const filename = isControlledAssetUrl(url) ? url.slice("/media/".length) : null;
+      if (!filename) return;
+      const response = await r2Request(config, "DELETE", `uploads/${filename}`);
+      if (response.status !== 404 && !response.ok) throw new Error(`R2 asset delete failed (${response.status})`);
+    },
+  };
+}
+
 export function getStorage(): StorageAdapter {
   const configured = process.env.STORAGE_DRIVER?.trim().toLowerCase();
-  const driver = configured || (process.env.VERCEL ? "vercel-blob" : "filesystem");
+  const driver = configured || (process.env.R2_ENDPOINT ? "r2" : process.env.VERCEL ? "vercel-blob" : "filesystem");
   if (driver === "filesystem") return createFilesystemStorage();
   if (driver === "vercel-blob" || driver === "blob") return createBlobStorage();
+  if (driver === "r2") return createR2Storage();
   throw new Error(`Unsupported STORAGE_DRIVER: ${driver}`);
 }
 
