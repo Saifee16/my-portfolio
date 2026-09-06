@@ -15,7 +15,7 @@ export function ProjectCard({ project, featured = false, paired = false }: { pro
         <span className={`status ${statusTone}`}>{project.status}</span>
       </div>
       <div className={`project-card-body ${featured ? "mt-10 lg:mt-12" : "mt-8"}`}>
-        <h3 className={featured ? "max-w-4xl text-4xl font-medium tracking-[-.05em] sm:text-6xl lg:text-7xl" : "text-3xl font-medium tracking-[-.045em] sm:text-4xl"}>{project.title}</h3>
+        <h3 className={featured ? "max-w-4xl text-balance text-3xl font-medium tracking-[-.045em] sm:text-5xl lg:text-6xl" : "text-balance text-2xl font-medium tracking-[-.04em] sm:text-3xl lg:text-4xl"}>{project.title}</h3>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[var(--copy)]">{project.subtitle}</p>
       </div>
       <div className="project-card-footer mt-8">
