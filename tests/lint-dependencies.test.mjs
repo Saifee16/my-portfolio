@@ -12,7 +12,7 @@ const requireFromNext = createRequire(require.resolve("@next/eslint-plugin-next"
 
 // Keep the directory-glob replacement covered until Next removes fast-glob.
 test("Next lint uses the safe glob replacement and still checks project links", () => {
-  assert.equal(requireFromNext("fast-glob/package.json").name, "tinyglobby");
+  assert.equal(requireFromNext("fast-glob/package.json").name, "@portfolio/next-lint-glob");
   const fixture = mkdtempSync(path.join(tmpdir(), "portfolio-lint-"));
   try {
     for (const app of ["admin", "store"]) {
