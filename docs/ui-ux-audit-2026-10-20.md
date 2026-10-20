@@ -41,6 +41,8 @@ Existing project slugs, ranks and featured hierarchy, draft/public visibility, e
 - ESLint: zero errors; three existing unused-function warnings in components/admin/admin-editor.tsx.
 - Measured contrast: muted text on the raised surface 6.70:1, input placeholders 6.42:1, and the primary button 16.56:1. These checks cover the changed tokens, not every possible text/background combination.
 - Independent code review: no actionable important findings.
+- Deployment checks: verified the live homepage, all three CV roles, six articles and cover images, RSS entries, and an exact SHA-256 match for the downloaded PDF.
+- Security update: Next.js and its ESLint configuration were upgraded to 16.4.2 with compatible transitive fixes. A clean GitHub runner passed lint, typechecking, all 16 tests, the production build, and a production-only dependency audit with zero vulnerabilities. The full audit still reports five high findings from the same unpatched braces dependency chain in development-only ESLint tooling; the existing CI audit gate is unchanged.
 
 ## Limits and deployment notes
 
