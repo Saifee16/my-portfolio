@@ -1,0 +1,32 @@
+{
+  "generator": "Built-in ImageGen",
+  "created": "2026-10-20",
+  "purpose": "Original conceptual editorial covers; not experimental figures or photographs of the author's work.",
+  "sharedPrompt": "Use case: stylized-concept. Asset type: landscape cover illustration for a professional AI engineering article. Style: sophisticated scientific editorial 3D illustration, restrained and precise, tactile matte materials, soft studio side lighting, credible geometry, quiet high-end technical journal. Wide 16:9 composition, principal subject in central 70 percent so the website crop remains safe, full-bleed background, crisp details. Palette: near-black graphite #08080a, charcoal, ivory, only a restrained lime #b7ff3c accent. No text, letters, numbers, logos, watermark, human faces, decorative fake dashboard, or exaggerated neon glow. This is an original conceptual illustration, not a measurement or a reproduction of a paper figure.",
+  "images": [
+    {
+      "file": "public/media/editorial/ann-neural-networks.png",
+      "subject": "An elegant physical interpretation of an artificial neural network: three parallel translucent planes of small graphite nodes, fine restrained lime connections between the layers, an input signal entering at left and a coherent geometric feature emerging at right. Emphasize learned representations rather than a literal brain."
+    },
+    {
+      "file": "public/media/editorial/neuro-symbolic-ai.png",
+      "subject": "A neural web of fine graphite filaments and sparse lime-lit nodes resolves into a precise arrangement of ivory geometric proof objects: a triangle, compass arcs, and a clean logical branching structure. Learned perception meeting explicit mathematical reasoning, one coherent scientific still life."
+    },
+    {
+      "file": "public/media/editorial/compositional-ai.png",
+      "subject": "A precise assembly of modular graphite geometric components, cubes, arches and short connecting rods, repeated familiar pieces recombined into a new stable structure. Show a small set of loose components in the foreground and their composition behind, without arrows or labels."
+    },
+    {
+      "file": "public/media/editorial/spiking-neural-networks.png",
+      "subject": "An event-driven neuromorphic microcircuit as a refined 3D scientific illustration: sparse lime pulses travelling along a few fine parallel traces across a matte graphite substrate, tiny bright events separated by long quiet intervals. A subtle pulse-raster motif is visible as short marks in space. No literal biological brain."
+    },
+    {
+      "file": "public/media/editorial/physics-informed-neural-networks.png",
+      "subject": "A continuous sculpted fluid surface constrained by a precise boundary frame and sparse measurement points, with a delicate graphite wire mesh converging to the surface. A few lime contour lines describe physical consistency. This is a conceptual artwork about data meeting physical laws, never a real simulation result."
+    },
+    {
+      "file": "public/media/editorial/physical-ai.png",
+      "subject": "A precision graphite robotic gripper poised over a small neutral machined part on a clean industrial workbench, accompanied by a very subtle adjacent wireframe digital twin of the same part in restrained lime. Clearly mechanical and physically plausible, a conceptual editorial artwork about perception, action and simulation."
+    }
+  ]
+}

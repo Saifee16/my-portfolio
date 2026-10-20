@@ -1,6 +1,8 @@
 import type { BlogPost, Certification, CommunityRole, Education, Experience, ImpactMetric, PortfolioContent, Project, ProjectDocument, ProjectVisual, ResearchItem, SkillGroup, Testimonial, NowEntry } from "./types.ts";
 import { isAssetUrl, isPdfAssetUrl } from "./asset-url.ts";
 import { editorialMigration, editorialPosts } from "./editorial-content.ts";
+import { technologyNotes, technologyNotesMigration } from "./technology-notes.ts";
+import { applyCvContentUpdate } from "./cv-content-update.ts";
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -67,12 +69,12 @@ function isProject(value: unknown): value is Project {
 }
 
 function isEditorialCoverUrl(value: unknown) {
-  return typeof value === "string" && /^\/media\/editorial\/[a-z0-9-]+\.svg$/i.test(value);
+  return typeof value === "string" && value.length <= 500 && /^\/media\/editorial\/[a-z0-9][a-z0-9_-]*\.(?:svg|png|webp)$/i.test(value);
 }
 
 function isResearchPublication(value: unknown) {
   return isRecord(value) &&
-    (value.status === "Planned" || value.status === "In preparation" || value.status === "Preprint available" || value.status === "Published") &&
+    (value.status === "Planned" || value.status === "In preparation" || value.status === "Under peer review" || value.status === "Preprint available" || value.status === "Published") &&
     isString(value.label, 240) &&
     isHttpUrl(value.url);
 }
@@ -90,7 +92,11 @@ export function normalizePortfolioContent(input: unknown): PortfolioContent {
   const migrations = isStringArray(input.migrations, 120, 40) ? input.migrations : [];
   const hasEditorialMigration = migrations.includes(editorialMigration);
   const blog = Array.isArray(input.blog) ? input.blog : [];
-  return {
+  const migratedBlog = !hasEditorialMigration
+    ? [...blog, ...editorialPosts.filter(post => !blog.some(item => isRecord(item) && item.slug === post.slug))]
+    : blog;
+  const hasTechnologyNotes = migrations.includes(technologyNotesMigration);
+  const normalized = {
     ...input,
     projects: input.projects.map(project => {
       if (!isRecord(project)) return project;
@@ -104,10 +110,8 @@ export function normalizePortfolioContent(input: unknown): PortfolioContent {
       if (normalized.slug !== "ms-ada" || Object.prototype.hasOwnProperty.call(normalized, "publication")) return normalized;
       return { ...normalized, publication: { status: "In preparation", label: "Read research paper", url: "" } };
     }),
-    blog: !hasEditorialMigration
-      ? [...blog, ...editorialPosts.filter(post => !blog.some(item => isRecord(item) && item.slug === post.slug))]
-      : blog,
-    migrations: hasEditorialMigration ? migrations : [...migrations, editorialMigration],
+    blog: hasTechnologyNotes ? migratedBlog : [...migratedBlog, ...technologyNotes.filter(post => !migratedBlog.some(item => isRecord(item) && item.slug === post.slug))],
+    migrations: [...new Set([...migrations, editorialMigration, technologyNotesMigration])],
     experience: Array.isArray(input.experience) ? input.experience.map(item => isRecord(item) ? { ...item, highlights: Array.isArray(item.highlights) ? item.highlights : [], links: Array.isArray(item.links) ? item.links : [] } : item) : [],
     research: Array.isArray(input.research) ? input.research.map(item => isRecord(item) ? { ...item, abstract: typeof item.abstract === "string" ? item.abstract : "", pdfUrl: typeof item.pdfUrl === "string" ? item.pdfUrl : "", publicationUrl: typeof item.publicationUrl === "string" ? item.publicationUrl : item.url ?? "", citationCount: typeof item.citationCount === "number" || item.citationCount === "" ? item.citationCount : "", featured: typeof item.featured === "boolean" ? item.featured : false } : item) : [],
     impact: Array.isArray(input.impact) ? input.impact : [],
@@ -117,6 +121,7 @@ export function normalizePortfolioContent(input: unknown): PortfolioContent {
     community: Array.isArray(input.community) ? input.community : [],
     activity: isRecord(input.activity) ? { enabled: input.activity.enabled === true, githubUrl: typeof input.activity.githubUrl === "string" ? input.activity.githubUrl : "" } : { enabled: false, githubUrl: "" },
   } as PortfolioContent;
+  return isPortfolioContent(normalized) ? applyCvContentUpdate(normalized) : normalized;
 }
 
 function isExperience(value: unknown): value is Experience {
@@ -142,7 +147,7 @@ function isTestimonial(value: unknown): value is Testimonial { return isRecord(v
 function isCommunity(value: unknown): value is CommunityRole { return isRecord(value) && isString(value.id, 120) && isString(value.title, 240) && isString(value.organization, 240) && isString(value.period, 120) && isString(value.description, 3_000) && isHttpUrl(value.url) && typeof value.visible === "boolean"; }
 
 function isBlogPost(value: unknown): value is BlogPost {
-  if (!isRecord(value) || !isString(value.id, 120) || !isSlug(value.slug) || !isString(value.title, 240) || !isString(value.excerpt, 2_000) || !isString(value.content, 200_000) || !isString(value.category, 120) || !isStringArray(value.tags, 80, 40) || (value.status !== "Draft" && value.status !== "Published") || !isString(value.publishedAt, 80) || !isString(value.seoTitle, 240) || !isString(value.seoDescription, 2_000) || !isHttpUrl(value.coverImage) || !(isAssetUrl(value.coverImage) || isEditorialCoverUrl(value.coverImage)) || typeof value.featured !== "boolean") return false;
+  if (!isRecord(value) || !isString(value.id, 120) || !isSlug(value.slug) || !isString(value.title, 240) || !isString(value.excerpt, 2_000) || !isString(value.content, 200_000) || !isString(value.category, 120) || !isStringArray(value.tags, 80, 40) || (value.status !== "Draft" && value.status !== "Published") || !isString(value.publishedAt, 80) || !isString(value.seoTitle, 240) || !isString(value.seoDescription, 2_000) || !(isAssetUrl(value.coverImage) || isEditorialCoverUrl(value.coverImage)) || typeof value.featured !== "boolean") return false;
   if (value.status === "Published" && (value.publishedAt === "" || Number.isNaN(new Date(value.publishedAt).getTime()))) return false;
   return value.status === "Draft" ? value.publishedAt === "" : !Number.isNaN(new Date(value.publishedAt).getTime());
 }

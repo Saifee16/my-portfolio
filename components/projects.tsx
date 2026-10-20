@@ -12,7 +12,7 @@ export async function Projects() {
   const compactFlagships = flagship.slice(3);
   return (
     <section id="work" className="section pt-12 sm:pt-14 lg:pt-16">
-      <SectionHeading index="01" eyebrow="Selected engineering" title="Systems built around reliability, evidence, and real constraints." description="The first four projects form a deliberate engineering progression: backend foundations → evaluated ML → LLM infrastructure → secure retrieval systems. Product and research work follows with its maturity labeled clearly." />
+      <SectionHeading index="01" eyebrow="Selected engineering" title="Systems built around reliability, evidence, and real constraints." description="RAG systems, evaluated ML APIs, and backend infrastructure, followed by live product work and computer-vision research." />
       <div className="mt-10 space-y-4">
         {primaryFlagship ? <ProjectCard project={primaryFlagship} featured key={primaryFlagship.slug} /> : null}
         {pairedFlagships.length ? <div className="grid gap-4 lg:grid-cols-2">{pairedFlagships.map(p => <ProjectCard project={p} paired key={p.slug} />)}</div> : null}

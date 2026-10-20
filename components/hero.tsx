@@ -6,12 +6,13 @@ export async function Hero() {
     <section id="top" className="relative overflow-hidden">
       <div className="shell pt-8 pb-14 sm:pt-10 sm:pb-16 lg:pt-10 lg:pb-16">
         <div>
+          <p className="mono mb-4 text-sm text-[var(--muted)]">{profile.name}</p>
           <div className="mb-6 flex min-w-0 items-center gap-3"><span className="h-12 w-[2px] bg-[var(--accent)]" aria-hidden="true" /><p className="eyebrow min-w-0 break-words">{profile.title}</p></div>
-          <h1 className="max-w-[1320px] text-balance text-[clamp(3.4rem,7.2vw,7.4rem)] font-medium leading-[.91] tracking-[-.062em] text-white">{profile.hero}</h1>
+          <h1 className="max-w-[1320px] text-balance text-[clamp(2.25rem,6.5vw,6.5rem)] font-medium leading-[.91] tracking-[-.062em] text-white">{profile.hero}</h1>
           <div className="mt-10 grid gap-8 lg:grid-cols-[1.1fr_.9fr] lg:items-end">
             <p className="max-w-2xl text-pretty text-lg leading-8 text-[var(--copy)] sm:text-xl">{profile.summary}</p>
             <div className="flex flex-wrap gap-3 lg:justify-end">
-              <a href="#work" className="button button-primary">View engineering work ↓</a>
+              <a href="#work" className="button button-primary">View work ↓</a>
               {cv.activeFileUrl ? <a href="/resume" download className="button button-secondary">Download résumé ↓</a> : <a href={profile.github} target="_blank" rel="noopener noreferrer" className="button button-secondary">GitHub ↗</a>}
             </div>
           </div>

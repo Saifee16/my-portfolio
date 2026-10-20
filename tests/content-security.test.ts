@@ -31,12 +31,80 @@ test("legacy projects without documents remain valid and normalize to an empty l
   assert.deepEqual(normalized.projects[0].documents, []);
 });
 
+test("research publication can be under peer review without implying acceptance", () => {
+  const updated = structuredClone(content) as SeedContent & { projects: Array<SeedProject & Record<string, unknown>> };
+  updated.projects[0].publication = { status: "Under peer review", label: "Research paper", url: "" };
+  assert.equal(isPortfolioContent(updated), true);
+  updated.projects[0].publication = { status: "Accepted without review", label: "Research paper", url: "" };
+  assert.equal(isPortfolioContent(updated), false);
+});
+
 test("project documents require controlled PDF assets", () => {
   const valid = structuredClone(content) as SeedContent & { projects: Array<SeedProject & Record<string, unknown>> };
   valid.projects[0].documents = [{ id: "doc-1", title: "Evaluation report", description: "Retrieval evaluation.", assetUrl: "/media/project-document-1.pdf" }];
   assert.equal(isPortfolioContent(valid), true);
   valid.projects[0].documents = [{ id: "doc-1", title: "Evaluation report", description: "Retrieval evaluation.", assetUrl: "/media/project-document-1.png" }];
   assert.equal(isPortfolioContent(valid), false);
+});
+
+test("normalized editorial content with bundled raster covers can be saved", () => {
+  const normalized = normalizePortfolioContent(content);
+  assert.equal(isPortfolioContent(normalized), true);
+  for (const coverImage of ["/media/editorial/ann-neural-networks.png", "/media/editorial/cover.webp", "/media/editorial/01_legacy-cover.png"]) {
+    const updated = structuredClone(normalized);
+    updated.blog[0].coverImage = coverImage;
+    assert.equal(isPortfolioContent(updated), true);
+  }
+  for (const coverImage of ["/media/editorial/../cover.png", "/media/editorial/cover.html", "/media/editorial/nested/cover.png"]) {
+    const updated = structuredClone(normalized);
+    updated.blog[0].coverImage = coverImage;
+    assert.equal(isPortfolioContent(updated), false);
+  }
+});
+
+test("new research notes migrate once without overwriting edits or restoring old deleted articles", () => {
+  const existing = structuredClone(content);
+  existing.migrations = ["editorial-v1"];
+  const migrated = normalizePortfolioContent(existing);
+  const published = migrated.blog.filter(post => post.status === "Published");
+  assert.equal(published.length, 6);
+  assert.equal(published.some(post => post.slug === "reliable-rag-begins-where-the-demo-ends"), false);
+  assert.equal(new Set(published.map(post => post.slug)).size, 6);
+  const edited = structuredClone(migrated);
+  edited.blog.find(post => post.slug === "neuro-symbolic-ai-learning-with-reasoning")!.title = "Owner-edited title";
+  edited.blog = edited.blog.filter(post => post.slug !== "spiking-neural-networks-event-driven-intelligence");
+  assert.deepEqual(normalizePortfolioContent(edited).blog, edited.blog);
+  assert.deepEqual(normalizePortfolioContent(migrated).blog, migrated.blog);
+});
+
+test("legacy CMS records receive CV updates while owner edits are preserved", () => {
+  const legacy = normalizePortfolioContent(content);
+  legacy.migrations = legacy.migrations?.filter(value => value !== "cv-update-2026-10");
+  legacy.profile.hero = "I build reliable AI systems and the software infrastructure around them.";
+  legacy.profile.title = "Applied AI & Full-Stack Engineer — Backend Focus";
+  legacy.cv = { label: "Résumé", activeFileUrl: "", version: "", updatedAt: "" };
+  legacy.experience = legacy.experience.filter(role => !["PNEC, NUST", "Wisdom Tech", "NCBC, NED University"].includes(role.organization));
+  legacy.skills = [];
+  const updated = normalizePortfolioContent(legacy);
+  assert.equal(updated.profile.title, "Applied AI Engineer");
+  assert.equal(updated.profile.hero, "I build AI systems and dependable backends.");
+  assert.equal(updated.cv.activeFileUrl, "/uploads/saifullah-ai-cv.pdf");
+  assert.equal(updated.experience.filter(role => role.organization === "Wisdom Tech").length, 1);
+  assert.equal(updated.skills.length, 5);
+  assert.deepEqual(normalizePortfolioContent(updated), updated);
+
+  const customized = structuredClone(legacy);
+  customized.profile.hero = "Owner's custom headline";
+  customized.cv.activeFileUrl = "/media/owner-resume.pdf";
+  customized.skills = [{ id: "owner", category: "Custom skills", skills: ["Rust"], visible: true }];
+  customized.experience.unshift({ title: "Research Analyst", organization: "PNEC, NUST", period: "Owner's dates", description: "Owner's edited role", highlights: [], links: [] });
+  const preserved = normalizePortfolioContent(customized);
+  assert.equal(preserved.profile.hero, "Owner's custom headline");
+  assert.equal(preserved.cv.activeFileUrl, "/media/owner-resume.pdf");
+  assert.deepEqual(preserved.skills, customized.skills);
+  assert.equal(preserved.experience.find(role => role.organization === "PNEC, NUST")?.description, "Owner's edited role");
+  preserved.experience = preserved.experience.filter(role => role.organization !== "Wisdom Tech");
+  assert.deepEqual(normalizePortfolioContent(preserved), preserved);
 });
 
 test("education period changes truthfully after the configured start date", () => {

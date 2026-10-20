@@ -12,7 +12,7 @@ export async function ExperienceSection() {
   ];
   return (
     <section id="experience" className="section">
-      <SectionHeading index="02" eyebrow="Experience" title="Experience across client work and teams." />
+      <SectionHeading index="02" eyebrow="Experience" title="Research, software, and data experience." />
       <div className="mt-10 space-y-12">
         {groups.map(group => group.items.length ? (
           <div key={group.title}>
@@ -25,7 +25,7 @@ export async function ExperienceSection() {
                     <h4 className="text-2xl font-medium tracking-[-.035em]">{item.title}</h4>
                     <p className="mt-1 text-sm text-[var(--accent)]">{item.organization}</p>
                     <p className="mt-4 max-w-3xl leading-7 text-[var(--copy)]">{item.description}</p>
-                    {item.highlights.length ? <ul className="mt-4 grid max-w-3xl gap-2 pl-5 text-sm leading-7 text-[var(--copy)] sm:grid-cols-2">{item.highlights.slice(0, 4).map(highlight => <li className="list-disc" key={highlight}>{highlight}</li>)}</ul> : null}
+                    {item.highlights.length ? <ul className="mt-4 grid max-w-3xl gap-2 pl-5 text-sm leading-7 text-[var(--copy)]">{item.highlights.slice(0, 4).map(highlight => <li className="list-disc" key={highlight}>{highlight}</li>)}</ul> : null}
                   </div>
                 </article>
               ))}

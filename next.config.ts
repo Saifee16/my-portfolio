@@ -14,6 +14,7 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  outputFileTracingIncludes: { "/resume": ["./public/uploads/saifullah-ai-cv.pdf"] },
   deploymentId: process.env.VERCEL_DEPLOYMENT_ID || process.env.NEXT_DEPLOYMENT_ID,
   poweredByHeader: false,
   reactStrictMode: true,

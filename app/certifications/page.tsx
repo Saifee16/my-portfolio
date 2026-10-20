@@ -12,5 +12,5 @@ export const metadata: Metadata = { title: "Certifications", description: "Selec
 export default async function CertificationsPage() {
   const { certifications } = await getContent();
   if (!certifications.length) notFound();
-  return <><Navbar /><main className="section pt-16"><Link className="text-link" href="/#education">← Back to education</Link><div className="mt-10 border-t border-white/10 pt-6"><p className="eyebrow">Credentials</p><h1 className="mt-6 max-w-5xl text-[clamp(3rem,7vw,7rem)] font-medium leading-[.92] tracking-[-.06em]">Certifications, kept useful.</h1><p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--copy)]">Selected professional credentials, filterable for quick review.</p></div><CertificationList certifications={certifications} /></main><Footer /></>;
+  return <><Navbar /><main id="main" className="section pt-16"><Link className="text-link" href="/#education">← Back to education</Link><div className="mt-10 border-t border-white/10 pt-6"><p className="eyebrow">Credentials</p><h1 className="mt-6 max-w-5xl text-[clamp(3rem,7vw,7rem)] font-medium leading-[.92] tracking-[-.06em]">Certifications, kept useful.</h1><p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--copy)]">Selected professional credentials, filterable for quick review.</p></div><CertificationList certifications={certifications} /></main><Footer /></>;
 }

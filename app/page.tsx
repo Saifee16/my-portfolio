@@ -12,5 +12,5 @@ import { Footer } from "@/components/footer";
 export const dynamic = "force-dynamic";
 
 export default function Home() {
-  return <><a className="skip-link" href="#main">Skip to content</a><Navbar /><main id="main"><Hero /><ProofStrip /><Projects /><ExperienceSection /><EducationSection /><ResearchSection /><WritingSection /><AboutSection /><VerifiedProofSections /><ContactSection /></main><Footer /></>;
+  return <><Navbar /><main id="main"><Hero /><ProofStrip /><Projects /><ExperienceSection /><EducationSection /><ResearchSection /><WritingSection /><AboutSection /><VerifiedProofSections /><ContactSection /></main><Footer /></>;
 }

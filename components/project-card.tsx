@@ -10,7 +10,7 @@ export function ProjectCard({ project, featured = false, paired = false }: { pro
   return (
     <article className={`project-card ${featured ? "featured" : ""} ${paired ? "paired" : ""}`}>
       {project.visuals?.[0]?.assetUrl ? <Image src={project.visuals[0].assetUrl} alt={project.visuals[0].alt || project.visuals[0].title} width={1600} height={900} className="mb-8 aspect-video w-full object-cover opacity-90" /> : null}
-      <div className="flex items-start justify-between gap-4 mono text-[10px] uppercase tracking-[.15em] text-[var(--muted)]">
+      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3 mono text-[10px] uppercase tracking-[.15em] text-[var(--muted)]">
         <span>{String(project.rank).padStart(2, "0")} / {project.category}</span>
         <span className={`status ${statusTone}`}>{project.status}</span>
       </div>
@@ -24,7 +24,7 @@ export function ProjectCard({ project, featured = false, paired = false }: { pro
           <a href={`/projects/${project.slug}`} className="text-link">Case study →</a>
           {repositoryIsPublic ? <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="text-link">Repository ↗</a> : <span className="mono text-[10px] uppercase tracking-[.1em] text-[var(--muted)]">{project.repoVisibility}</span>}
           {liveUrlIsSafe ? <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-link">Live ↗</a> : null}
-          {project.publication ? publicationUrlIsSafe ? <a href={project.publication.url} target="_blank" rel="noopener noreferrer" className="text-link">{project.publication.label || "Research paper"} ↗</a> : <span className="button button-disabled">Research paper · {project.publication.status}</span> : null}
+          {project.publication ? publicationUrlIsSafe ? <a href={project.publication.url} target="_blank" rel="noopener noreferrer" className="text-link">{project.publication.label || "Research paper"} ↗</a> : <span className="mono text-xs leading-6 text-[var(--muted)]">Research paper · {project.publication.status}</span> : null}
         </div>
       </div>
     </article>

@@ -23,7 +23,7 @@ export type ProjectVisual = {
 };
 
 export type ResearchPublication = {
-  status: "Planned" | "In preparation" | "Preprint available" | "Published";
+  status: "Planned" | "In preparation" | "Under peer review" | "Preprint available" | "Published";
   label: string;
   url: string;
 };

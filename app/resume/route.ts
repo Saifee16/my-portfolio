@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getContent } from "@/lib/cms";
 import { isPdfAssetUrl } from "@/lib/asset-url";
-import { getStorage } from "@/lib/storage";
+import { createFilesystemStorage, getStorage } from "@/lib/storage";
 import { hasValidFileSignature } from "@/lib/uploads";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +9,9 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const { cv } = await getContent();
   if (!isPdfAssetUrl(cv.activeFileUrl)) return NextResponse.json({ error: "Resume is not available yet" }, { status: 404 });
-  const asset = await getStorage().readAsset(cv.activeFileUrl);
+  // The bundled CV remains available when the CMS uses remote storage.
+  const storage = cv.activeFileUrl === "/uploads/saifullah-ai-cv.pdf" ? createFilesystemStorage() : getStorage();
+  const asset = await storage.readAsset(cv.activeFileUrl);
   if (!asset || !hasValidFileSignature("application/pdf", asset.bytes)) return NextResponse.json({ error: "Resume is not available" }, { status: 404 });
   return new NextResponse(Buffer.from(asset.bytes), {
     headers: {
