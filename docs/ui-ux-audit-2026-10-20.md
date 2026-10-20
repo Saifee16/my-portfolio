@@ -49,3 +49,13 @@ Existing project slugs, ranks and featured hierarchy, draft/public visibility, e
 This is a source and browser audit, not a full WCAG conformance certification. Lighthouse/Core Web Vitals, Safari/Firefox, physical devices, screen readers, authenticated CMS interactions, and live newsletter delivery were not measured or exercised. No synthetic performance scores are claimed. Existing dark styling was preserved; adding a separate light theme would be additional product work.
 
 The repository seed includes the updated CV and six illustrated technology notes. An already-initialized CMS receives a guarded, one-time CV update: only unchanged legacy values are replaced, missing CV experience and research are added, and owner-edited values remain intact. A separate article migration adds missing notes without replacing existing posts. Saved migration markers prevent deleted items from being restored on later reads. Future CV uploads continue to use the configured storage provider. Subscriber records are unaffected.
+
+## Visual spacing follow-up - 21 October 2026
+
+- Moved section defaults into the CSS components layer so Tailwind spacing utilities work. The availability strip now has zero top padding instead of an unintended 64px on desktop.
+- Tightened section headings, hero spacing and section rhythm; removed empty research action rows and the redundant bottom padding before Contact.
+- Changed the leading article preview to an image/text split on desktop, with images filling the card at the tablet breakpoint. Stacked previews remain on smaller screens.
+- Expanded the blog grid to the page width and moved its subscription panel below the articles. The RSS link shares the introductory row, avoiding an extra mobile row.
+- At 1440 x 900, homepage writing height decreased from 2357px to 1524px; blog main height decreased from 4151px to 2850px. Article text and images remain present.
+- Checked 320, 390, 768, 1024 and 1440px layouts: no horizontal overflow or clipped headings, article text, links or inputs. All ten blog images loaded. Confirmed the subscription panel follows the articles and research cards have no empty action rows.
+- Changed-file lint, TypeScript, all 16 tests, production compilation and independent source/cascade review passed. Local dependencies remain Next.js 16.3.2; the production manifest remains 16.4.2. Live production verification follows deployment.

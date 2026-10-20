@@ -4,7 +4,7 @@ export async function Hero() {
   const { profile, cv } = await getContent();
   return (
     <section id="top" className="relative overflow-hidden">
-      <div className="shell pt-8 pb-14 sm:pt-10 sm:pb-16 lg:pt-10 lg:pb-16">
+      <div className="shell pt-8 pb-8 sm:pt-10 sm:pb-10">
         <div>
           <p className="mono mb-4 text-sm text-[var(--muted)]">{profile.name}</p>
           <div className="mb-6 flex min-w-0 items-center gap-3"><span className="h-12 w-[2px] bg-[var(--accent)]" aria-hidden="true" /><p className="eyebrow min-w-0 break-words">{profile.title}</p></div>
