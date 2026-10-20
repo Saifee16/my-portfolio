@@ -59,3 +59,9 @@ The repository seed includes the updated CV and six illustrated technology notes
 - At 1440 x 900, homepage writing height decreased from 2357px to 1524px; blog main height decreased from 4151px to 2850px. Article text and images remain present.
 - Checked 320, 390, 768, 1024 and 1440px layouts: no horizontal overflow or clipped headings, article text, links or inputs. All ten blog images loaded. Confirmed the subscription panel follows the articles and research cards have no empty action rows.
 - Changed-file lint, TypeScript, all 16 tests, production compilation and independent source/cascade review passed. Local dependencies remain Next.js 16.3.2; the production manifest remains 16.4.2. Live production verification follows deployment.
+
+## Dependency audit fix - 21 October 2026
+
+The remaining full-audit failure comes from [the unpatched braces advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) through Next's development-only directory lookup. A scoped npm override replaces only `@next/eslint-plugin-next`'s `fast-glob` dependency with a local adapter around `tinyglobby@0.2.17`, already used elsewhere in the dependency tree. [Next's lookup](https://github.com/vercel/next.js/blob/v16.4.2/packages/eslint-plugin-next/src/utils/get-root-dirs.ts) uses `globSync` with `onlyDirectories`; [tinyglobby](https://github.com/SuperchupuDev/tinyglobby) supports that interface without the vulnerable dependency chain. The adapter disables automatic directory expansion to preserve fast-glob's literal and brace-pattern behavior. Remove the override and adapter when Next's lint package drops fast-glob or adopts a patched dependency chain.
+
+A regression test checks the installed replacement, default roots, directory glob patterns, root arrays, and that the Next lint rule still rejects internal HTML links while accepting external ones. The existing lint rules and full CI dependency audit remain enabled.
