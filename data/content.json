@@ -2,12 +2,12 @@
   "profile": {
     "name": "Saifullah Suleman",
     "shortName": "Saifullah",
-    "title": "Applied AI Engineer",
-    "eyebrow": "COMPUTER VISION / RAG SYSTEMS / PYTHON BACKENDS",
-    "hero": "I build AI systems and dependable backends.",
-    "summary": "Applied AI engineer focused on computer vision, RAG systems, and Python backend development. Building evaluated AI prototypes, a live retail storefront, and CNC monitoring research at NUST PNEC.",
-    "about": "I build and evaluate AI systems with the backend infrastructure they need. My work spans computer vision, retrieval-augmented generation, Python APIs, and full-stack applications. At NUST PNEC, I contribute to Pakistan Science Foundation-funded research on CNC process-health monitoring, from machining datasets to vibration-signal inference for IoT and edge integration.",
-    "availability": "Available for full-time AI/ML roles in Karachi (onsite or hybrid) or remotely.",
+    "title": "Associate Business Analyst | Solution Design & Systems Integration",
+    "eyebrow": "BUSINESS ANALYSIS / SOLUTION DESIGN / SYSTEMS INTEGRATION",
+    "hero": "I turn business needs into working systems.",
+    "summary": "Business analysis, solution design, and systems integration, backed by hands-on work in applied AI, backend development, data analytics, and industrial AI research.",
+    "about": "I am a telecommunications engineer and M.S. Artificial Intelligence candidate with experience in business analysis, backend development, applied AI, data analysis, and industrial AI research. I translate business needs into practical technology solutions through requirements gathering, workflow analysis, application features, and API integrations. My work includes AI-enabled applications, RAG and LLM systems, ML decision support, reporting dashboards, and CNC process-health monitoring research at NUST PNEC.",
+    "availability": "Open to associate business analysis and AI business solutions roles in Karachi or remotely.",
     "email": "imsaifq1@gmail.com",
     "linkedin": "https://www.linkedin.com/in/saifullah-suleman/",
     "github": "https://github.com/Saifee16",
@@ -18,9 +18,9 @@
     {
       "slug": "pdf-rag-chatbot",
       "rank": 1,
-      "title": "PDF RAG Chatbot",
-      "subtitle": "Secure async document intelligence with hybrid retrieval, OCR, abstention, and grounded citations.",
-      "category": "Flagship Engineering",
+      "title": "PDF RAG System",
+      "subtitle": "An asynchronous document-question-answering backend with OCR, traceable page citations, and confidence-based no-answer handling.",
+      "category": "Applied AI & Knowledge Systems",
       "status": "Shipped",
       "visibility": "Public",
       "repoVisibility": "Public repository",
@@ -37,28 +37,29 @@
         "Docker"
       ],
       "highlights": [
-        "Asynchronous PDF ingestion with worker-based processing and persistent metadata.",
-        "Dense, hybrid, and hybrid-rerank retrieval with evidence-based confidence gating and abstention.",
-        "Native, scanned, and mixed PDF handling with local OCR plus layout/table-aware extraction.",
-        "Validated page citations, retrieval traces, reindex fingerprints, regression evaluation, and security hardening.",
-        "Compared dense, hybrid, and reranked retrieval across 46 synthetic regression cases: 32 positive and 14 negative/no-answer."
+        "Asynchronous FastAPI ingestion for native and scanned PDFs using Tesseract OCR and Celery/Redis workers.",
+        "Qdrant retrieval with dense, hybrid, and reranked strategies, confidence-based abstention, and validated page citations.",
+        "PostgreSQL conversations, retrieval traces, persistent metadata, and reindex fingerprints.",
+        "Docker, automated tests, CI gates, document validation, and security hardening.",
+        "Compared retrieval strategies across 46 synthetic regression cases: 32 positive and 14 negative/no-answer."
       ],
       "architecture": "PDF validation → async queue → extraction/OCR → structure-aware chunks → embeddings → Qdrant + lexical retrieval → fusion/reranking → confidence gate → grounded generation → validated citations",
-      "caseStudy": "Built as an infrastructure-complete RAG backend rather than a chat demo. The system treats ingestion, retrieval quality, confidence calibration, document security, citation validity, and regression testing as first-class engineering problems.",
+      "caseStudy": "Built an asynchronous document-question-answering backend that connects PDF ingestion, OCR, retrieval, and cited answers to application workflows. PostgreSQL conversations and retrieval traces support investigation of system behavior; confidence-based abstention handles insufficient evidence. Dense, hybrid, and reranked retrieval were compared across 46 synthetic regression cases, with automated tests and CI gates.",
       "limitations": "Evaluation is repository-defined and domain-dependent; OCR and layout heuristics are bounded by configured limits and do not imply universal document understanding.",
       "featured": true,
       "documents": [],
       "outcomes": [
-        "46 synthetic regression cases covering answerable and no-answer queries."
+        "46 synthetic regression cases: 32 positive and 14 negative/no-answer."
       ],
-      "role": "Applied AI / backend development"
+      "role": "Applied AI and backend development",
+      "visuals": []
     },
     {
       "slug": "llm-api-gateway",
       "rank": 2,
       "title": "LLM API Gateway",
-      "subtitle": "Provider-neutral LLM infrastructure with stable aliases, retries, fallback chains, usage accounting, and analytics.",
-      "category": "Flagship Engineering",
+      "subtitle": "A provider-neutral FastAPI gateway for OpenAI and Gemini, with consistent interfaces, fallback policies, request tracing, and usage analytics.",
+      "category": "Systems Integration & APIs",
       "status": "Shipped",
       "visibility": "Public",
       "repoVisibility": "Public repository",
@@ -74,23 +75,64 @@
         "Pytest"
       ],
       "highlights": [
-        "Stable model aliases decouple application code from provider-specific model names.",
-        "Ordered fallback chains, retry/backoff with jitter, gateway timeouts, and normalized errors.",
-        "Structured JSON output, embeddings, normalized token usage, cached-token accounting, and cost estimates.",
-        "Persistent usage analytics with async tests, routing/fallback coverage, CI, CodeQL, and Dependabot."
+        "Stable model aliases and provider adapters separate application code from provider-specific APIs.",
+        "Retry/timeout policies, ordered fallback chains, jittered backoff, and standardized errors.",
+        "Structured JSON responses and embeddings for downstream applications.",
+        "Token/cost accounting, usage analytics, and request tracing to support integration decisions.",
+        "Provider routing and fallback tests, CI checks, CodeQL, and Dependabot."
       ],
       "architecture": "Client → stable alias/router → provider adapter → retry/timeout policy → fallback provider → normalized response + usage ledger",
-      "caseStudy": "Designed to make provider switching and failure recovery an infrastructure concern instead of leaking vendor-specific behavior into every application.",
+      "caseStudy": "Built a consistent integration boundary for applications using OpenAI and Gemini. Model aliases, provider adapters, standardized errors, and fallback policies keep upstream differences out of application workflows. Structured JSON responses and embeddings support downstream features, while token/cost accounting, usage analytics, and request tracing provide evidence for integration decisions.",
       "limitations": "Provider behavior and pricing still change externally; the gateway normalizes interfaces but cannot eliminate upstream availability or model-quality differences.",
       "featured": true,
-      "documents": []
+      "documents": [],
+      "role": "Backend development and provider integration",
+      "outcomes": [],
+      "visuals": []
+    },
+    {
+      "slug": "wahab-mobiles",
+      "rank": 3,
+      "title": "Wahab Mobiles E-commerce Platform",
+      "subtitle": "A live retail catalogue with inventory/admin tools, a React/TypeScript frontend on Vercel, and a Fastify/PostgreSQL backend on Render.",
+      "category": "Product & E-commerce Solutions",
+      "status": "Production",
+      "visibility": "Public",
+      "repoVisibility": "Public repository",
+      "repoUrl": "https://github.com/Saifee16/e-com-WM",
+      "liveUrl": "https://wahabmobiles.com",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Fastify",
+        "Prisma",
+        "PostgreSQL",
+        "Redis",
+        "Docker",
+        "Nginx"
+      ],
+      "highlights": [
+        "React/TypeScript frontend deployed on Vercel with a Fastify/PostgreSQL backend on Render.",
+        "Live catalogue lists 80+ active products for a family retail business.",
+        "Inventory and administration tools with ordering workflows implemented for an upcoming launch."
+      ],
+      "architecture": "React storefront → Fastify API → auth/commerce services → Prisma/PostgreSQL + Redis → containerized reverse-proxy deployment",
+      "caseStudy": "Built the React/TypeScript storefront and Fastify/PostgreSQL backend for a family retail business, connecting catalogue browsing with inventory and administration tools. The frontend runs on Vercel and the backend on Render. The catalogue has 80+ active products as of October 2026, with ordering workflows implemented for an upcoming launch.",
+      "limitations": "The catalogue is live; ordering workflows are prepared for an upcoming launch. Product count reflects the supplied CV and can change. Commercial and operational data remain private.",
+      "featured": true,
+      "documents": [],
+      "outcomes": [
+        "Live retail catalogue with 80+ active products as of October 2026."
+      ],
+      "role": "Full-stack development and API integration",
+      "visuals": []
     },
     {
       "slug": "lead-scoring-ml-api",
-      "rank": 3,
+      "rank": 4,
       "title": "Lead Scoring ML API",
-      "subtitle": "An evaluated supervised-ML inference service with calibration, threshold policy, model integrity checks, and reproducible synthetic benchmarks.",
-      "category": "Flagship Engineering",
+      "subtitle": "A scikit-learn/FastAPI methodology demo exploring calibrated lead scores and business-cost thresholds on a clearly labeled synthetic dataset.",
+      "category": "ML Decision Support",
       "status": "Shipped",
       "visibility": "Public",
       "repoVisibility": "Public repository",
@@ -111,17 +153,19 @@
         "Model manifest and SHA-256 verification before deserialization, CI coverage, CodeQL, and release/container workflows."
       ],
       "architecture": "Synthetic dataset → feature pipeline → model selection → calibration + threshold policy → signed artifact manifest → FastAPI inference",
-      "caseStudy": "The project focuses on the engineering around an ML model: data contracts, probability calibration, decision thresholds, artifact integrity, reproducibility, and honest evaluation boundaries.",
+      "caseStudy": "Built a decision-support methodology demo using 5,000 synthetic leads with separate training, validation, and test sets. Calibration diagnostics and cost-based thresholds make the relationship between model scores and decisions explicit. A FastAPI service exposes the model with typed data contracts, artifact integrity checks, and reproducible evaluation. Held-out ROC-AUC was 0.729 on 1,000 synthetic test rows; this is not a claim of real CRM performance or causal business impact.",
       "limitations": "Methodology demo using synthetic leads. The held-out ROC-AUC of 0.729 does not establish real CRM performance or causal business impact.",
       "featured": true,
       "documents": [],
       "outcomes": [
         "ROC-AUC 0.729 on 1,000 held-out test rows from a 5,000-row synthetic dataset."
-      ]
+      ],
+      "role": "ML methodology and API development",
+      "visuals": []
     },
     {
       "slug": "ai-engineering-starter-kit",
-      "rank": 4,
+      "rank": 5,
       "title": "AI Engineering Starter Kit",
       "subtitle": "A reusable FastAPI foundation for production-minded AI services with typed configuration, persistence, testing, security guardrails, and CI.",
       "category": "Flagship Engineering",
@@ -149,43 +193,11 @@
       "architecture": "Client → FastAPI routes → service/provider layer → typed schemas → persistence/migrations → observability + tests + CI",
       "caseStudy": "A foundation project built to eliminate repeated setup work while keeping production constraints visible from day one.",
       "limitations": "It is a starter architecture, not a substitute for application-specific threat modeling, scaling, observability, or domain logic.",
-      "featured": true,
-      "documents": []
-    },
-    {
-      "slug": "wahab-mobiles",
-      "rank": 5,
-      "title": "Wahab Mobiles",
-      "subtitle": "A live React/TypeScript retail catalogue with a Fastify/PostgreSQL backend, inventory and admin tools, and ordering workflows prepared for an upcoming launch.",
-      "category": "Production & Product Engineering",
-      "status": "Production",
-      "visibility": "Public",
-      "repoVisibility": "Public repository",
-      "repoUrl": "https://github.com/Saifee16/e-com-WM",
-      "liveUrl": "https://wahabmobiles.com",
-      "stack": [
-        "React",
-        "TypeScript",
-        "Fastify",
-        "Prisma",
-        "PostgreSQL",
-        "Redis",
-        "Docker",
-        "Nginx"
-      ],
-      "highlights": [
-        "React/TypeScript frontend deployed on Vercel with a Fastify/PostgreSQL backend on Render.",
-        "Live catalogue lists 80+ active products for a family retail business.",
-        "Inventory and administration tools with ordering workflows implemented for an upcoming launch."
-      ],
-      "architecture": "React storefront → Fastify API → auth/commerce services → Prisma/PostgreSQL + Redis → containerized reverse-proxy deployment",
-      "caseStudy": "Built a live retail storefront for a family business, connecting catalogue browsing and inventory administration to a Fastify/PostgreSQL backend. Ordering workflows are implemented for an upcoming launch.",
-      "limitations": "The catalogue is live; ordering workflows are prepared for an upcoming launch. Product count reflects the supplied CV and can change. Commercial and operational data remain private.",
       "featured": false,
       "documents": [],
-      "outcomes": [
-        "Live retail catalogue with 80+ active products, as documented in the CV."
-      ]
+      "role": "",
+      "outcomes": [],
+      "visuals": []
     },
     {
       "slug": "lucidfence",
@@ -216,7 +228,10 @@
       "caseStudy": "LucidFence explores privacy-preserving family protection as a local systems problem across networking, policy enforcement, web controls, operations, and security—not just as a browser blocklist.",
       "limitations": "Private alpha. Physical-device and bypass-resistance testing remains part of the validation process; no production-grade effectiveness claim is made yet.",
       "featured": false,
-      "documents": []
+      "documents": [],
+      "role": "",
+      "outcomes": [],
+      "visuals": []
     },
     {
       "slug": "atlas",
@@ -246,7 +261,10 @@
       "caseStudy": "Atlas is being built around the hard part of procurement intelligence: not merely finding a similar listing, but establishing enough identity, provenance, cost, and supplier evidence to compare sourcing decisions credibly.",
       "limitations": "Still under private development. Public usage, benchmark claims, and source release will be added only after validation and launch.",
       "featured": false,
-      "documents": []
+      "documents": [],
+      "role": "",
+      "outcomes": [],
+      "visuals": []
     },
     {
       "slug": "ms-ada",
@@ -286,30 +304,33 @@
       },
       "outcomes": [
         "Tested on multiple raw traffic videos with snapshots, evidence clips, and structured event outputs."
-      ]
+      ],
+      "role": "",
+      "visuals": []
     }
   ],
   "experience": [
     {
-      "title": "Research Analyst",
+      "title": "AI Research Associate",
       "organization": "PNEC, NUST",
       "period": "September 2026 - Present",
       "description": "Contributing to Pakistan Science Foundation-funded CNC process-health monitoring research at NUST PNEC, Karachi.",
       "highlights": [
         "Curate CNC machining datasets through preprocessing, operation-wise segmentation, and labeling of continuous production-cycle signals.",
         "Develop and evaluate PyTorch/TensorFlow models for CNC process-health monitoring.",
-        "Build vibration-signal inference components for integration with the project's IoT and edge architecture."
+        "Build vibration-signal inference components for integration with the project's IoT/edge architecture."
       ],
       "links": []
     },
     {
-      "title": "Full Stack Developer",
+      "title": "Business Solutions & Systems Design Engineer",
       "organization": "Wisdom Tech",
       "period": "August 2025 - August 2026",
-      "description": "Backend-focused development for business and e-commerce applications. Karachi / Remote.",
+      "description": "Translated client needs and business workflows into practical application features, API integrations, and delivered software solutions.",
       "highlights": [
-        "Built Python and Node.js/TypeScript backends and APIs with PostgreSQL integration.",
-        "Contributed to Shopify implementations, testing, and deployment."
+        "Participated in client meetings to understand business needs, capture requirements, and clarify workflows.",
+        "Proposed practical solutions, translating business needs into application features and API integrations.",
+        "Implemented solutions using Python, Node.js/TypeScript, PostgreSQL, and Shopify; supported testing, deployment, and client feedback."
       ],
       "links": []
     },
@@ -328,23 +349,27 @@
       "title": "Freelance Developer & Data Analyst",
       "organization": "Independent",
       "period": "Project-based",
-      "description": "Delivered freelance work across data analysis and web development, translating client requirements into practical analyses, reports, and software deliverables. Specific client names and commercially sensitive details remain private unless explicitly approved for publication."
+      "description": "Delivered freelance work across data analysis and web development, translating client requirements into practical analyses, reports, and software deliverables. Specific client names and commercially sensitive details remain private unless explicitly approved for publication.",
+      "highlights": [],
+      "links": []
     },
     {
       "title": "President",
       "organization": "TE Links — NED University",
       "period": "2025–2026",
-      "description": "Led the departmental student body through a year spanning 10+ events, 6 technical sessions, 10+ partnerships, and 3 community initiatives across technical learning, professional development, student community, and university programming."
+      "description": "Led the NED departmental student body through 10+ events, 6 technical sessions, 10+ partnerships, and 3 community initiatives during 2025-2026.",
+      "highlights": [],
+      "links": []
     }
   ],
   "education": [
     {
       "degree": "M.S. Artificial Intelligence",
-      "institution": "National University of Sciences & Technology (NUST)",
+      "institution": "National University of Sciences & Technology (NUST), PNEC",
       "location": "Karachi, Pakistan",
       "period": "September 2026 - Present",
       "startDate": "2026-09-07",
-      "description": "M.S. Artificial Intelligence at Pakistan Navy Engineering College (PNEC), Karachi. Expected graduation: 2028."
+      "description": "M.S. Artificial Intelligence candidate at Pakistan Navy Engineering College (PNEC), NUST, Karachi. Expected graduation: 2028."
     },
     {
       "degree": "B.E. Telecommunications Engineering",
@@ -364,7 +389,7 @@
       "doi": "",
       "url": "",
       "year": "",
-      "description": "Pakistan Science Foundation-funded research on CNC machining signals: dataset preprocessing, operation-wise segmentation and labeling, model evaluation with PyTorch/TensorFlow, and vibration-signal inference for IoT and edge integration. Contributing as Research Analyst since September 2026.",
+      "description": "Pakistan Science Foundation-funded CNC process-health monitoring research: dataset preprocessing, operation-wise segmentation and labeling, PyTorch/TensorFlow model evaluation, and vibration-signal inference for IoT/edge integration. Contributing as AI Research Associate at PNEC, NUST since September 2026.",
       "abstract": "",
       "pdfUrl": "",
       "publicationUrl": "",
@@ -379,7 +404,12 @@
       "doi": "",
       "url": "",
       "year": "",
-      "description": "Academic computer-vision research from the NED Final Year Project (June 2025 - August 2026), combining YOLO11 detection, ByteTrack tracking, EasyOCR-based Pakistani ALPR, and multi-signal accident reasoning. Tested on multiple raw traffic videos with snapshots, evidence clips, and structured event outputs. Manuscript under peer review; no publication or acceptance is claimed."
+      "description": "Academic computer-vision research from the NED Final Year Project (June 2025 - August 2026), combining YOLO11 detection, ByteTrack tracking, EasyOCR-based Pakistani ALPR, and multi-signal accident reasoning. Tested on multiple raw traffic videos with snapshots, evidence clips, and structured event outputs. Manuscript under peer review; no publication or acceptance is claimed.",
+      "abstract": "",
+      "pdfUrl": "",
+      "publicationUrl": "",
+      "citationCount": "",
+      "featured": false
     }
   ],
   "blog": [
@@ -424,9 +454,9 @@
   ],
   "cv": {
     "label": "Résumé",
-    "activeFileUrl": "/uploads/saifullah-ai-cv.pdf",
-    "version": "Applied AI CV - October 2026",
-    "updatedAt": "2026-10-20"
+    "activeFileUrl": "/uploads/saifullah-ba-cv.pdf",
+    "version": "Business Analysis CV - October 2026",
+    "updatedAt": "2026-10-29"
   },
   "newsletter": {
     "enabled": true,
@@ -441,67 +471,90 @@
   },
   "skills": [
     {
+      "id": "business-analysis",
+      "category": "Business Analysis & Delivery",
+      "skills": [
+        "Requirements gathering",
+        "Stakeholder communication",
+        "Workflow analysis",
+        "Solution scoping"
+      ],
+      "visible": true
+    },
+    {
+      "id": "solution-design",
+      "category": "Solution Design & Integration",
+      "skills": [
+        "System design fundamentals",
+        "REST APIs",
+        "Data flows",
+        "SQL / PostgreSQL",
+        "IoT / edge concepts"
+      ],
+      "visible": true
+    },
+    {
       "id": "ai-ml",
-      "category": "AI & machine learning",
-      "skills": [
-        "Python",
-        "PyTorch",
-        "TensorFlow",
-        "scikit-learn",
-        "Model training & evaluation"
-      ],
-      "visible": true
-    },
-    {
-      "id": "computer-vision",
-      "category": "Computer vision",
-      "skills": [
-        "YOLO11",
-        "OpenCV",
-        "ByteTrack",
-        "EasyOCR",
-        "Detection",
-        "Tracking",
-        "ALPR"
-      ],
-      "visible": true
-    },
-    {
-      "id": "llm-systems",
-      "category": "LLM systems",
+      "category": "Applied AI & ML",
       "skills": [
         "RAG",
-        "Embeddings",
+        "LLM APIs",
         "Qdrant",
-        "OpenAI / Gemini APIs"
+        "scikit-learn",
+        "PyTorch",
+        "TensorFlow",
+        "Model evaluation"
       ],
       "visible": true
     },
     {
       "id": "backend-web",
-      "category": "Backend & web",
+      "category": "Development & Delivery",
       "skills": [
+        "Python",
         "FastAPI",
-        "Node.js",
-        "TypeScript",
-        "Fastify",
-        "React",
-        "PostgreSQL"
+        "Node.js / TypeScript",
+        "Shopify",
+        "Docker",
+        "Git",
+        "pytest",
+        "CI/CD"
       ],
       "visible": true
     },
     {
-      "id": "engineering",
-      "category": "Engineering",
+      "id": "data-analytics",
+      "category": "Data & Analytics",
       "skills": [
-        "Redis",
-        "Celery",
-        "Docker",
-        "pytest",
-        "Git",
-        "GitHub Actions"
+        "SQL",
+        "Power BI",
+        "Tableau",
+        "Reporting dashboards",
+        "Telecommunications signal processing"
       ],
       "visible": true
     }
+  ],
+  "now": [
+    {
+      "id": "cnc-research",
+      "title": "CNC process-health monitoring research",
+      "summary": "Working as an AI Research Associate at PNEC, NUST on Pakistan Science Foundation-funded research: machining datasets, PyTorch/TensorFlow model evaluation, and vibration-signal inference for IoT/edge integration.",
+      "updatedAt": "2026-10-29",
+      "links": [],
+      "visible": true
+    },
+    {
+      "id": "ms-ai-nust",
+      "title": "M.S. Artificial Intelligence at NUST PNEC",
+      "summary": "Pursuing an M.S. in Artificial Intelligence in Karachi, with expected graduation in 2028, building on a B.E. in Telecommunications Engineering completed at NED University in June 2026.",
+      "updatedAt": "2026-10-29",
+      "links": [],
+      "visible": true
+    }
+  ],
+  "migrations": [
+    "cv-update-2026-10",
+    "business-cv-2026-10-29"
   ]
 }

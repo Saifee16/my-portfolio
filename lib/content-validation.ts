@@ -3,6 +3,7 @@ import { isAssetUrl, isPdfAssetUrl } from "./asset-url.ts";
 import { editorialMigration, editorialPosts } from "./editorial-content.ts";
 import { technologyNotes, technologyNotesMigration } from "./technology-notes.ts";
 import { applyCvContentUpdate } from "./cv-content-update.ts";
+import { applyBusinessCvUpdate } from "./business-cv-update.ts";
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -121,7 +122,7 @@ export function normalizePortfolioContent(input: unknown): PortfolioContent {
     community: Array.isArray(input.community) ? input.community : [],
     activity: isRecord(input.activity) ? { enabled: input.activity.enabled === true, githubUrl: typeof input.activity.githubUrl === "string" ? input.activity.githubUrl : "" } : { enabled: false, githubUrl: "" },
   } as PortfolioContent;
-  return isPortfolioContent(normalized) ? applyCvContentUpdate(normalized) : normalized;
+  return isPortfolioContent(normalized) ? applyBusinessCvUpdate(applyCvContentUpdate(normalized)) : normalized;
 }
 
 function isExperience(value: unknown): value is Experience {

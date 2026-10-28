@@ -12,7 +12,7 @@ export async function ExperienceSection() {
   ];
   return (
     <section id="experience" className="section">
-      <SectionHeading index="02" eyebrow="Experience" title="Research, software, and data experience." />
+      <SectionHeading index="02" eyebrow="Experience" title="Business analysis, research, and delivery." />
       <div className="mt-10 space-y-12">
         {groups.map(group => group.items.length ? (
           <div key={group.title}>

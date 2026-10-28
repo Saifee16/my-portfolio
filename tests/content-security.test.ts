@@ -15,7 +15,8 @@ const content = JSON.parse(readTextFile(new URL("../data/content.json", import.m
 
 test("seeded portfolio content preserves the required project hierarchy", () => {
   assert.equal(isPortfolioContent(content), true);
-  assert.deepEqual(content.projects.map(project => project.slug), ["pdf-rag-chatbot", "llm-api-gateway", "lead-scoring-ml-api", "ai-engineering-starter-kit", "wahab-mobiles", "lucidfence", "atlas", "ms-ada"]);
+  assert.deepEqual(content.projects.map(project => project.slug), ["pdf-rag-chatbot", "llm-api-gateway", "wahab-mobiles", "lead-scoring-ml-api", "ai-engineering-starter-kit", "lucidfence", "atlas", "ms-ada"]);
+  assert.deepEqual(content.projects.filter(project => project.featured).map(project => project.slug), ["pdf-rag-chatbot", "llm-api-gateway", "wahab-mobiles", "lead-scoring-ml-api"]);
   assert.equal(content.projects.filter(project => project.featured).length, 4);
   assert.equal(content.projects.find(project => project.slug === "wahab-mobiles")?.liveUrl, "https://wahabmobiles.com");
   assert.equal(content.projects.find(project => project.slug === "lucidfence")?.repoUrl, "");
