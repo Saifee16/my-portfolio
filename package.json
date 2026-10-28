@@ -21,6 +21,7 @@
     "server-only": "^0.0.1"
   },
   "overrides": {
+    "zod": "4.6.7",
     "@next/eslint-plugin-next": {
       "fast-glob": "$fast-glob"
     }
