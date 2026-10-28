@@ -7,7 +7,7 @@ export async function EducationSection() {
   const featured = certifications.filter(c => c.featured).slice(0, 6);
   return (
     <section id="education" className="section">
-      <SectionHeading index="03" eyebrow="Education" title="From telecommunications and computer vision toward applied AI systems." />
+      <SectionHeading index="03" eyebrow="Education" title="Engineering foundations. AI-focused postgraduate study." />
       <div className="mt-9 grid gap-5 lg:grid-cols-2">
         {education.map((item, idx) => (
           <article className="surface p-6 sm:p-8" key={`${item.degree}-${idx}`}>

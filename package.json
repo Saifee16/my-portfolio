@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/content-security.test.ts tests/storage.test.ts tests/lint-dependencies.test.mjs",
+    "test": "node --experimental-strip-types --test tests/content-security.test.ts tests/business-cv.test.ts tests/storage.test.ts tests/lint-dependencies.test.mjs",
     "hash-admin-password": "node --experimental-strip-types scripts/hash-admin-password.mjs",
     "export-blob": "node scripts/export-blob.mjs",
     "restore-blob": "node scripts/restore-blob.mjs"

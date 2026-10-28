@@ -8,6 +8,7 @@ out
 public/uploads/*
 !public/uploads/.gitkeep
 !public/uploads/saifullah-ai-cv.pdf
+!public/uploads/saifullah-ba-cv.pdf
 data/admin-sessions.json
 backups/
 *.tsbuildinfo
